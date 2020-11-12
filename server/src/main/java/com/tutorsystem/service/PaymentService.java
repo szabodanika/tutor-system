@@ -1,12 +1,13 @@
-package service;
+package com.tutorsystem.service;
 
-import model.Payment;
+import com.tutorsystem.model.Lesson;
+import com.tutorsystem.model.Payment;
+import com.tutorsystem.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import repository.PaymentRepository;
-import repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PaymentService implements CustomService<Payment, Long> {
@@ -16,21 +17,22 @@ public class PaymentService implements CustomService<Payment, Long> {
 
     @Override
     public List<Payment> findAll() {
-        return null;
+        return this.repository.findAll();
     }
 
     @Override
-    public Payment findById(Long aLong) {
-        return null;
+    public Payment findById(Long id) {
+        Optional<Payment> payment = this.repository.findById(id);
+        return payment.orElse(null);
     }
 
     @Override
-    public void deleteById(Long aLong) {
-
+    public void deleteById(Long id) {
+        this.repository.deleteById(id);
     }
 
     @Override
-    public void save(Payment item) {
-
+    public void save(Payment payment) {
+        this.repository.save(payment);
     }
 }

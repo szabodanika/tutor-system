@@ -1,53 +1,36 @@
 <template>
-  <b-card>
-    <b-card-title>
-      Week 12
-    </b-card-title>
-    <b-table striped :fields='fields' :items='lessons'>
-      <template #cell(Day)="data">
-        {{ days[data.index] }}
-      </template>
-    </b-table>
+  <b-card no-body id='container'>
+    <b-row no-gutters>
+      <b-col>
+        <b-checkbox>
+          Paid
+        </b-checkbox>
+      </b-col>
+      <b-col>
+        {{ lesson.hours }} {{ lesson.hours > 1 ? `hours` : `hour` }}
+      </b-col>
+    </b-row>
   </b-card>
 </template>
 
 <script>
 export default {
-  name: "WeekView",
-  data() {
-    return {
-      days: [
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-        'Sunday'
-      ],
-      fields: [
-        'Day',
-        {
-          key: '0',
-          label: 'Test User 1',
-        },
-        {
-          key: '1',
-          label: 'Test User 1',
-        }
-      ],
-      lessons: [
-        {0: 'Test Lesson', 1: 'Test Lesson'},
-        {1: 'Test Lesson'},
-        {0: 'Test Lesson', 1: 'Test Lesson'},
-        {1: 'Test Lesson'},
-        {0: 'Test Lesson'},
-      ]
+  name: "LessonPreview",
+  props: {
+    lesson: {
+      hours: 0,
+      payment: null
     }
+  },
+  data() {
+    return {}
   }
 }
 </script>
 
 <style scoped>
-
+  #container {
+    padding: 0.5rem;
+    margin: 0;
+  }
 </style>

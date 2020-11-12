@@ -1,7 +1,10 @@
-package model;
+package com.tutorsystem.model;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Calendar;
+import java.util.Date;
 
 @Entity
 @Table(name = "lesson")
@@ -12,27 +15,42 @@ public class Lesson {
     private long id;
 
     @ManyToOne
+    @JsonIgnoreProperties({"tutorLessons", "paymentsSent", "paymentsReceived", "students"})
     private User tutor;
 
     @ManyToOne
+    @JsonIgnoreProperties({"studentLessons", "tutor", "paymentsSent", "paymentsReceived"})
     private User student;
+
     private int rate;
     private Date start, end;
 
-    @ManyToOne
-    private Payment payment;
+    @Transient
+    private int week;
+
+    @Transient
+    private int hours;
 
     public Lesson() {
     }
 
-    public Lesson(long id, User tutor, User student, int rate, Date start, Date end, Payment payment) {
-        this.id = id;
-        this.tutor = tutor;
-        this.student = student;
-        this.rate = rate;
-        this.start = start;
-        this.end = end;
-        this.payment = payment;
+    public int getWeek() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(this.start);
+        return cal.get(Calendar.WEEK_OF_YEAR);
+    }
+
+    public int getHours() {
+        final int MILLI_TO_HOUR = 1000 * 60 * 60;
+        return (int) (this.end.getTime() - this.start.getTime()) / MILLI_TO_HOUR;
+    }
+
+    public void setHours(int hours) {
+        this.hours = hours;
+    }
+
+    public void setWeek(int week) {
+        this.week = week;
     }
 
     public long getId() {
@@ -83,11 +101,4 @@ public class Lesson {
         this.end = end;
     }
 
-    public Payment getPayment() {
-        return payment;
-    }
-
-    public void setPayment(Payment payment) {
-        this.payment = payment;
-    }
 }

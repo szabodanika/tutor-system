@@ -1,5 +1,12 @@
+require('dotenv').config()
+
 export default {
-  // Global page headers (https://go.nuxtjs.dev/config-head)
+
+  server: {
+    port: process.env.PORT,
+    host: process.env.HOST
+  },
+
   head: {
     title: 'tutor-system',
     meta: [
@@ -13,8 +20,10 @@ export default {
   },
 
   css: [
+    '~/assets/css/light.scss',
   ],
   plugins: [
+    { src: '~/plugins/services.js', ssr: true },
   ],
   components: true,
   buildModules: [
@@ -22,8 +31,20 @@ export default {
   modules: [
     'bootstrap-vue/nuxt',
     '@nuxtjs/axios',
+    '@nuxtjs/dotenv',
+    // '@nuxtjs/proxy'
   ],
-  axios: {},
+  proxy: {
+    // '/api': {
+    //   target: 'http://localhost',
+    //   pathRewrite: {
+    //     '^/api' : '/'
+    //   }
+    // }
+  // },
+  // axios: {
+  //   proxy: true
+  },
   build: {
   }
 }

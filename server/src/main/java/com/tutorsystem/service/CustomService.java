@@ -1,4 +1,4 @@
-package service;
+package com.tutorsystem.service;
 
 import java.util.List;
 

@@ -1,0 +1,34 @@
+$white: #141518 !default;
+$gray-100: #1c2028 !default;
+$gray-200: #242a34 !default;
+$gray-300: #37445a !default;
+$gray-400: #37445a !default;
+$gray-500: #526182 !default;
+$gray-600: #526182 !default;
+$gray-700: #8290aa !default;
+$gray-800: #8290aa !default;
+$gray-900: #dfe8f5 !default;
+$black: #fff !default;
+
+$primary: $gray-700 !default;
+$secondary: $gray-600 !default;
+
+$blue: #6610f2 !default;
+$indigo: #6610f2 !default;
+$purple: #6f42c1 !default;
+$pink: #e83e8c !default;
+$red: #dc3545 !default;
+$orange: #fd7e14 !default;
+$yellow: #ffc107 !default;
+$green: #28a745 !default;
+$teal: #20c997 !default;
+$cyan: #6610f2 !default;
+
+$success: $green !default;
+$info: $cyan !default;
+$warning: $yellow !default;
+$danger: $red !default;
+$light: $gray-100 !default;
+$dark: $gray-800 !default;
+
+@import 'base';

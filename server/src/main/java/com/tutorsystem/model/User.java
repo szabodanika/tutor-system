@@ -1,7 +1,10 @@
-package model;
+package com.tutorsystem.model;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -11,38 +14,124 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private String firstName, lastName, email, phone, password;
+    private String firstName, lastName, email, phone;
     private Date registered;
-    private boolean isTutor;
+    private int rate, tutorCode;
+    private boolean activated, disabled, admin;
 
-    @OneToOne
+    @JsonIgnore
+    private String password;
+
+    @ManyToOne
+    @JsonIgnoreProperties({"students", "tutorLessons", "paymentsReceived"})
     private User tutor;
 
-    @OneToMany(mappedBy = "lesson",  cascade = CascadeType.ALL)
-    private List<Lesson> lessons;
+    @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("tutor")
+    private List<Lesson> tutorLessons;
 
-    @OneToMany(mappedBy = "user",  cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("student")
+    private List<Lesson> studentLessons;
+
+    @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({"tutor", "studentLessons", "paymentsSent", "paymentsReceived"})
     private List<User> students;
 
-    @OneToMany(mappedBy = "payment",  cascade = CascadeType.ALL)
-    private List<Lesson> payments;
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("student")
+    private List<Payment> paymentsSent;
+
+    @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("tutor")
+    private List<Payment> paymentsReceived;
+
+    private boolean isTutor = false;
+
+    @Transient
+    private int totalPaid;
+
+    @Transient
+    private int totalDebt;
+
+    private int activationCode;
+
 
     public User() {
     }
 
-    public User(long id, String firstName, String lastName, String email, String phone, String password, Date registered, boolean isTutor, User tutor, List<Lesson> lessons, List<User> students, List<Lesson> payments) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phone = phone;
-        this.password = password;
-        this.registered = registered;
-        this.isTutor = isTutor;
-        this.tutor = tutor;
-        this.lessons = lessons;
-        this.students = students;
-        this.payments = payments;
+    private void computeBalance() {
+        this.totalPaid = 0;
+        this.totalDebt = 0;
+        if (this.studentLessons != null) {
+            for (Lesson lesson : this.studentLessons) {
+                totalDebt += lesson.getRate() * lesson.getHours();
+            }
+        }
+
+        if (this.paymentsSent != null) {
+            for (Payment payment : this.paymentsSent) {
+                totalPaid += payment.getAmount();
+            }
+        }
+    }
+
+    public int getActivationCode() {
+        return activationCode;
+    }
+
+    public void setActivationCode(int activationCode) {
+        this.activationCode = activationCode;
+    }
+
+    public int getTutorCode() {
+        return tutorCode;
+    }
+
+    public void setTutorCode(int tutorCode) {
+        this.tutorCode = tutorCode;
+    }
+
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+
+    public int getTotalPaid() {
+        computeBalance();
+        return totalPaid;
+    }
+
+    public void setTotalPaid(int totalPaid) {
+        this.totalPaid = totalPaid;
+    }
+
+    public int getTotalDebt() {
+        computeBalance();
+        return totalDebt;
+    }
+
+    public void setTotalDebt(int totalDebt) {
+        this.totalDebt = totalDebt;
     }
 
     public long getId() {
@@ -102,7 +191,7 @@ public class User {
     }
 
     public boolean isTutor() {
-        return isTutor;
+        return !this.students.isEmpty();
     }
 
     public void setTutor(boolean tutor) {
@@ -117,12 +206,22 @@ public class User {
         this.tutor = tutor;
     }
 
-    public List<Lesson> getLessons() {
-        return lessons;
+    public List<Lesson> getTutorLessons() {
+        return tutorLessons;
     }
 
-    public void setLessons(List<Lesson> lessons) {
-        this.lessons = lessons;
+    public void setTutorLessons(List<Lesson> tutorLessons) {
+        this.tutorLessons = tutorLessons;
+        computeBalance();
+    }
+
+    public List<Lesson> getStudentLessons() {
+        return studentLessons;
+    }
+
+    public void setStudentLessons(List<Lesson> studentLessons) {
+        this.studentLessons = studentLessons;
+        computeBalance();
     }
 
     public List<User> getStudents() {
@@ -133,11 +232,29 @@ public class User {
         this.students = students;
     }
 
-    public List<Lesson> getPayments() {
-        return payments;
+    public List<Payment> getPaymentsSent() {
+        return paymentsSent;
     }
 
-    public void setPayments(List<Lesson> payments) {
-        this.payments = payments;
+    public void setPaymentsSent(List<Payment> paymentsSent) {
+        this.paymentsSent = paymentsSent;
+        computeBalance();
+    }
+
+    public List<Payment> getPaymentsReceived() {
+        return paymentsReceived;
+    }
+
+    public void setPaymentsReceived(List<Payment> paymentsReceived) {
+        this.paymentsReceived = paymentsReceived;
+        computeBalance();
+    }
+
+    public int getRate() {
+        return rate;
+    }
+
+    public void setRate(int rate) {
+        this.rate = rate;
     }
 }

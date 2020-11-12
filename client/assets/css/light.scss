@@ -1,0 +1,88 @@
+$white: #fff !default;
+$gray-100: #f7f7f7 !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #6c757d !default;
+$gray-700: #495057 !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+$black: #000 !default;
+
+$primary: #f70 !default;
+$secondary: #6610f2 !default;
+
+$blue: #6610f2 !default;
+$indigo: #6610f2 !default;
+$purple: #6f42c1 !default;
+$pink: #e83e8c !default;
+$red: #dc3545 !default;
+$orange: #fd7e14 !default;
+$yellow: #ffc107 !default;
+$green: #28a745 !default;
+$teal: #20c997 !default;
+$cyan: #6610f2 !default;
+
+
+$success: $green !default;
+$info: $cyan !default;
+$warning: $yellow !default;
+$danger: $red !default;
+$light: $gray-100 !default;
+$dark: $gray-800 !default;
+
+$theme-colors: () !default;
+$theme-colors: map-merge(
+                (
+                        'primary': $primary,
+                        'secondary': $secondary,
+                        'success': $success,
+                        'info': $info,
+                        'warning': $warning,
+                        'danger': $danger,
+                        'light': $light,
+                        'dark': $dark
+                ),
+                $theme-colors
+);
+$link-color: $gray-800;
+
+$enable-shadows: false;
+$enable-rounded: true;
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=Poppins:wght@400&family=Courier+Prime&family=PT+Serif&family=Montserrat:ital,wght@1,400;1,800&amily=Source+Code+Pro&family=Open+Sans&family=Open+Sans+Condensed:wght@300&family=Playfair+Display&family=Press+Start+2P&family=Roboto&display=swap');
+$font-family-sans-serif: 'Open Sans', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+
+
+@import '../../node_modules/bootstrap/scss/bootstrap';
+@import '../../node_modules/bootstrap-vue/src/index';
+
+body {
+  background: $gray-100;
+}
+
+a {
+  text-decoration: none !important;
+}
+
+* {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+h1, .h1 {
+  font-family: 'IBM Plex Sans SemiBold';
+  font-weight: 600;
+  color: $black;
+}
+h2, h3, h4, h5, h6, .h2, .h3, .h4, .h5, .h6 {
+  color: $black;
+  //font-family: 'Anton';
+  font-family: 'Open Sans';
+  font-weight: 600;
+  //font-weight: 400;
+}
+
+
+

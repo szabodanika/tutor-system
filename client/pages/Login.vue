@@ -80,7 +80,7 @@ export default {
         if (this.login.rememberMe) {
           this.$cookies.set('user', res.id, '1h')
         }
-        this.$cookies.set('email', this.login.email, '1h')
+        this.$cookies.set('email', this.login.email, '14d')
         this.$nuxt.$emit('event', {
           name: 'login',
           value: res

@@ -8,7 +8,7 @@ export default {
   },
 
   head: {
-    title: 'tutor-system',
+    title: 'oktatutor',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },

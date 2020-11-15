@@ -72,6 +72,7 @@ public class User {
         if (this.paymentsSent != null) {
             for (Payment payment : this.paymentsSent) {
                 totalPaid += payment.getAmount();
+                totalDebt -= payment.getAmount();
             }
         }
     }

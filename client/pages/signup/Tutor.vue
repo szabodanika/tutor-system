@@ -86,7 +86,7 @@ export default {
           name: 'login',
           value: res
         })
-        this.$nuxt.$emit("success", "succesfully_registered")
+        this.$nuxt.$emit("success", "successfully_registered")
       }).catch((error) => {
         // check if we have a string response data. these are usually custom defined on server side
         if (error.response && (typeof error.response.data === "string" || error.response.data instanceof String))

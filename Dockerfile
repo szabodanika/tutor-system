@@ -20,7 +20,6 @@ CMD [ "npm", "start" ]
 #spring
 # get openjdk 14
 FROM openjdk:14
-CMD [ "mvn", "start" ]
-COPY tar application.jar
-ARG JAR_FILE=target/*.jar
+CMD [ "mvn", "spring-boot:run" ]
+COPY target/oktatutor-server-0.0.1.jar application.jar
 EXPOSE 8080

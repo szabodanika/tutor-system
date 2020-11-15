@@ -1,5 +1,6 @@
 <template>
-  <b-overlay :show='isLoading' v-if='user' id="container">
+  <b-overlay :show='isLoading' v-if='user' id="container" :rounded='true'
+             spinner-type='grow'  :opacity="1.0"  blur="1rem">
     <b-row align='middle' id='tutorCode'>
       <b-col>
         <b-card>
@@ -52,10 +53,6 @@ export default {
     }
   },
   mounted() {
-    if (!this.user) {
-      this.$nuxt.$emit("error", "not_logged_in")
-      return
-    }
     this.getStudents()
   },
   methods: {
@@ -110,7 +107,7 @@ export default {
 }
 
 .student{
-  margin-bottom: 1rem;
+  margin: 0.5rem;
 }
 
 </style>

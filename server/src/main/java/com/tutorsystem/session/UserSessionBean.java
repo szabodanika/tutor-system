@@ -15,7 +15,7 @@ public class UserSessionBean {
     private static final int MAX_AGE_LIMIT = 60;
 
     private User user;
-    private Date sessionStart = new Date();
+    private Date sessionStart = null;
 
     public String validate(Long user) {
         if(this.user == null) return "not_logged_in";
@@ -45,4 +45,8 @@ public class UserSessionBean {
     }
 
 
+    public void signOut() {
+        this.user = null;
+        this.sessionStart = null;
+    }
 }

@@ -1,8 +1,9 @@
 <template>
   <div class="container" v-if='user'>
-    <b-row align='middle'>
+    <b-row align='middle' class='addLessonButton'>
       <b-col>
-        <b-button :disabled='user.students.length == 0' pill @click='$nuxt.$router.push(`/newlesson`)'>
+        <b-button :disabled='user.students.length == 0' pill
+                  @click='$nuxt.$router.push(`/newlesson`)'>
           <b-icon icon='plus-circle'></b-icon>
           Add lesson
         </b-button>
@@ -11,19 +12,23 @@
 
     <b-button
         @click='extraWeeksBefore.push(week-(extraWeeksBefore.length+1)); extraWeeksBefore = extraWeeksBefore.sort()'>
+      <b-icon icon='arrow-left'></b-icon>
       Previous week
     </b-button>
     <br>
     <br>
-    <WeekView v-if='user' :user='user' @error='handleError' :tutor='user.id' :week='week' v-for='(week, index) in
+    <WeekView class='weekListItem' v-if='user' :user='user' @error='handleError' :tutor='user.id' :week='week' v-for='(week, index) in
     extraWeeksBefore'
               v-bind:key='index'/>
-    <WeekView v-if='user' :user='user' @error='handleError' :tutor='user.id' :week='week'/>
-    <WeekView v-if='user' :user='user' @error='handleError' :tutor='user.id' :week='week+1'/>
-    <WeekView v-if='user' :user='user' @error='handleError' :tutor='user.id' :week='week'
+    <WeekView class='weekListItem' v-if='user' :user='user' @error='handleError' :tutor='user.id' :week='week'/>
+    <WeekView class='weekListItem' v-if='user' :user='user' @error='handleError' :tutor='user.id' :week='week+1'/>
+    <WeekView class='weekListItem' v-if='user' :user='user' @error='handleError' :tutor='user.id' :week='week'
               v-for='(week, index) in extraWeeksAfter'
               v-bind:key='index'/>
-    <b-button @click='extraWeeksAfter.push(week+extraWeeksAfter.length+2)'> Next week</b-button>
+    <b-button @click='extraWeeksAfter.push(week+extraWeeksAfter.length+2)'>Next week
+      <b-icon
+          icon='arrow-right'></b-icon>
+    </b-button>
   </div>
 </template>
 
@@ -47,10 +52,6 @@ export default {
     }
   },
   created() {
-    if (!this.user) {
-      this.$nuxt.$emit("error", "not_logged_in")
-      return
-    }
   },
   methods: {
     getWeekNumber(date) {
@@ -73,5 +74,9 @@ export default {
 <style>
 .weekListItem {
   margin-bottom: 2rem;
+}
+
+.addLessonButton {
+  margin-bottom: 1rem;
 }
 </style>

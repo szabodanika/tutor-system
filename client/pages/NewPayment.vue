@@ -52,12 +52,8 @@ export default {
     }
   },
   mounted() {
-    if (!this.user)  {
-      this.$nuxt.$emit("error", "not_logged_in")
-      return
-    }
     this.user.students.forEach((student) => {
-      this.students.push({value: student.id, text: `${student.firstName} ${student.lastName}`},)
+      this.students.push({value: student.id, text: `${student.firstName} ${student.lastName?student.lastName:""}`},)
     })
   },
   methods: {
@@ -66,6 +62,7 @@ export default {
           this.payment.cash,
           this.payment.transactionNumber).then((res) => {
         this.$nuxt.$emit("success", "succesfully_saved_payment")
+        this.$nuxt.$router.push("/payments")
       }).catch((error) => {
         // check if we have a string response data. these are usually custom defined on server side
         if (error.response && (typeof error.response.data === "string" || error.response.data instanceof String))

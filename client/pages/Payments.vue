@@ -1,5 +1,6 @@
 <template>
-  <b-overlay :show='isLoading' v-if='user'>
+  <b-overlay :show='isLoading' v-if='user' :rounded='true'
+             spinner-type='grow'  :opacity="1.0"  variant='transparent' blur="1rem">
     <b-row align='middle'>
       <b-col>
         <b-button :disabled='user.students.length == 0' pill @click='$nuxt.$router.push("/newpayment")'>
@@ -47,10 +48,6 @@ export default {
     }
   },
   mounted() {
-    if (!this.user) {
-      this.$nuxt.$emit("error", "not_logged_in")
-      return
-    }
     this.getStudents()
   },
   methods: {

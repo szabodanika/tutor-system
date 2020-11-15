@@ -1,10 +1,11 @@
 <template>
-  <b-overlay :show="isLoading" rounded="sm">
+  <b-overlay :show="isLoading" :rounded='true' variant='transparent'
+             spinner-type='grow'  :opacity="1.0"  blur="1rem">
     <b-card id='container' no-body>
       <template #header>
-        <b-row>
+        <b-row align-v='center'>
           <b-col align='left'>
-            <h2> Week {{ week }} </h2>
+            <h2  class='text-primary'> Week {{ week }} </h2>
           </b-col>
           <b-col align='right'>
             <h5>
@@ -13,10 +14,14 @@
           </b-col>
         </b-row>
       </template>
-      <span style='overflow-x: scroll'>
-        <b-table v-if='fields.length > 1' striped :fields='fields' :items='days' ref='week-table' small>
-          <template #cell(day)="data">
-            {{ days[data.index].day }}
+      <span>
+<!--          style='overflow-x: scroll'-->
+        <b-table responsive='xl' class='table' v-if='fields && fields.length > 1' hover :fields='fields'
+                 :items='days'
+                 ref='week-table'
+                 small >
+          <template #cell(day)="data" align-v='center'>
+             {{ formatDateWithDay(days[data.index].day) }}
           </template>
           <template #cell(gex)="data">
             {{ data.item }}
@@ -29,11 +34,11 @@
           </template>
 
           <template v-slot:[`head(${key})`]="data" v-for='(key, index) in studentsKeys'>
-            <StudentPreview :student='key'>
+            <StudentPreview :student='key' style='margin-bottom: 0;'>
             </StudentPreview>
           </template>
         </b-table>
-        <p class='noLessons'>
+        <p v-if='!lessons || lessons.length == 0' class='noLessons'>
            No lessons this week
         </p>
       </span>
@@ -58,40 +63,29 @@ export default {
       handler: function (lessons) {
         this.getLessons()
       }
-    }
-    ,
+    },
     lessons: {
       handler: function (lessons) {
 
         this.fields = [{key: 'day', label: ''}]
-        this.days = [
-          {day: "Monday",},
-          {day: "Tuesday"},
-          {day: "Wednesday"},
-          {day: "Thursday",},
-          {day: "Friday"},
-          {day: "Saturday"},
-          {day: "Sunday"},
-        ]
-        this.students = []
+        this.days = []
+
+        for (let i = 0; i < 7; i++) {
+          let date = this.getMondayOfWeek(this.week, this.year)
+          let date2 = new Date(date.getFullYear(), date.getMonth(), date.getDate() + i)
+          this.days.push({day: date2})
+        }
+        this.students = this.user.students
+        this.students.forEach((student) => {
+          this.studentsKeys.push(student.id)
+          this.fields.push({
+            key: student.id.toString(),
+            label: student.firstName + " " + student.lastName
+          })
+        })
 
         lessons.forEach((lesson) => {
-          // check if student is in the list
-          let studentAdded = false
-          this.students.forEach((student) => {
-            if (student.id == lesson.student.id) {
-              studentAdded = true
-            }
-          })
-          if (!studentAdded) {
-            this.students.push(lesson.student)
-            this.studentsKeys.push(lesson.student.id)
-            this.fields.push({
-              key: lesson.student.id.toString(),
-              label: lesson.student.firstName + " " + lesson.student.lastName
-            })
-          }
-          this.days[lesson.start.getDay()][lesson.student.id] = lesson
+          this.days[lesson.start.getDay() == 0 ? 6 : lesson.start.getDay() - 1][lesson.student.id] = lesson
         })
 
         this.isLoading = false
@@ -103,19 +97,15 @@ export default {
     return {
       lessons: null,
       fields: [{key: 'day', label: ''}],
-      days: [
-        {day: "Monday",},
-        {day: "Tuesday"},
-        {day: "Wednesday"},
-        {day: "Thursday",},
-        {day: "Friday"},
-        {day: "Saturday"},
-        {day: "Sunday"},
-      ],
+      days: [],
       students: [],
       studentsKeys: [],
       isLoading: true,
-      date: this.getDateOfWeek(this.week, new Date().getFullYear())
+      year: 2020,
+      date: this.getMondayOfWeek(this.week, this.year),
+      daysOfWeek: [
+        "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+      ]
     }
   },
   mounted() {
@@ -137,7 +127,7 @@ export default {
     },
     getWeekNumber(date) {
       let dayn = (date.getDay() + 6) % 7;
-      date.setDate(date.getDate() - dayn + 3);
+      date.setDate(date.getDate() - dayn + 1);
       let firstThursday = date.valueOf();
       date.setMonth(0, 1);
       if (date.getDay() !== 4) {
@@ -145,14 +135,36 @@ export default {
       }
       return 1 + Math.ceil((firstThursday - date) / 604800000);
     },
-    getDateOfWeek(w, y) {
-      var d = (1 + (w - 1) * 7);
-      return new Date(y, 0, d);
+    getMondayOfWeek(w, y) {
+      if(!y) y = new Date().getFullYear()
+      let firstDayOfYear = new Date(y, 0, 0).getDay()
+      var monday = (w - 1) * 7 - firstDayOfYear + 1;
+      console.log(monday)
+      console.log(`day ${monday} of year ${y} is ${new Date(y, 0, monday)}`)
+      return new Date(y, 0, monday);
     },
     formatDate(date) {
+      if (!date) return "error"
       return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
     },
+    formatDateWithDay(date) {
+      if (!date) return "error"
+      let append = null
+      let dateLastDigit = date.getDate().toString().substr(date.getDate().toString().length - 1)
+      if (dateLastDigit == 1) {
+        append = "st"
+      } else if (dateLastDigit == 2) {
+        append = "nd"
+      } else if (dateLastDigit == 3) {
+        append = "rd"
+      } else append = "th"
+      if(date.getDate() == 11 || date.getDate() == 12 || date.getDate() == 13){
+        append = "th"
+      }
+      return  this.daysOfWeek[date.getDay() == 0 ? 6 : date.getDay() - 1] + " " + date.getDate() + append
+    },
     formatDateTime(date) {
+      if (!date) return "error"
       return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +
           date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
     }
@@ -168,4 +180,10 @@ export default {
 .noLessons {
   margin: 1rem;
 }
+
+.table {
+  padding-bottom: 0.5rem;
+  margin-bottom: 0;
+}
+
 </style>

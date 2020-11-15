@@ -1,16 +1,13 @@
 <template>
   <div id='root'>
-    <b-navbar id='navigation' toggleable="lg" variant="light" type="light" sticky>
+    <b-navbar id='navigation' toggleable="lg" variant="light" type="light" sticky align='center'>
       <b-navbar-brand href="#">
         oktatutor
       </b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
-          <nuxt-link v-if='user' to="/home" class='nav-link'>
-            Home
-          </nuxt-link>
-          <nuxt-link v-else to="/" class='nav-link'>
+          <nuxt-link to="/" class='nav-link'>
             Home
           </nuxt-link>
         </b-navbar-nav>
@@ -41,9 +38,13 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-    <Login v-if='restrictedPages.includes($nuxt.$route.path) && !user' :user='user'
-           class='content'/>
-    <NuxtChild v-else :user='user' class='content'/>
+    <b-overlay :show="isLoading" class='content' :rounded='true'
+               variant='transparent' spinner-type='grow'  :opacity="1.0"  blur="1rem">
+      <span v-if='!isLoading'>
+        <NuxtChild v-if='user || !restrictedPages.includes($nuxt.$route.path)' :user='user' class='content'/>
+        <Login v-else class='content'/>
+      </span>
+    </b-overlay>
 
   </div>
 </template>
@@ -53,7 +54,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Lessons from "@/pages/Lessons";
 import Login from "@/pages/Login";
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import {BootstrapVue, IconsPlugin} from 'bootstrap-vue'
 import VueCookies from 'vue-cookies'
 
 Vue.use(VueCookies)
@@ -67,6 +68,7 @@ export default {
   data() {
     return {
       user: null,
+      isLoading: true,
       restrictedPages: [
         "/account",
         "/lessons",
@@ -80,9 +82,9 @@ export default {
   watch: {},
   mounted() {
     let user = this.$cookies.get('user')
-    if(user) {
-      this.user = this.getUser(user)
-    }
+    if (user) this.getUser(user)
+    else this.isLoading = false
+
     this.$nuxt.$on("event", (event) => {
       if (event.name == "login") {
         this.user = event.value
@@ -100,13 +102,17 @@ export default {
       let messages = {
         'unexpected_error': 'An unexpected error has occured.',
         'invalid_session': 'Invalid user session. Please log in again.',
+        'session_expired': 'Your login session has expired. Please log in to continue.',
         'invalid_credentials': 'Invalid credentials',
         'not_logged_in': 'Please log in to continue',
         'login_closed': 'Login service has been temporarily closed.',
         'signup_closed': 'Registration service has been temporarily closed.',
         'api_closed': 'Data service has been temporarily closed.'
       }
-      if (msg == 'not_logged_in') this.$nuxt.$router.push("/login")
+      if (msg == 'not_logged_in') {
+        this.$nuxt.$router.push("/login")
+        this.user = null
+      }
       this.$bvToast.toast(msg in messages ? messages[msg] : msg, {
         title: "Error",
         toaster: 'b-toaster-top-right',
@@ -133,10 +139,11 @@ export default {
     },
     handleSuccess(msg) {
       let messages = {
-        'successful_login': `Welcome back${this.user?`, ${this.user.firstName}`:``}`,
+        'successful_login': `Welcome back${this.user ? `, ${this.user.firstName}` : ``}`,
         'successfully_registered': 'Registration successful. You can log in now.',
         'successfully_created_virtual_student': 'Student successfully added.',
-        'successfully_activated': 'Successfully activated account.'
+        'successfully_activated': 'Successfully activated account.',
+        'successfully_saved_lesson': 'Lesson saved successfully.'
       }
 
       this.$bvToast.toast(msg in messages ? messages[msg] : msg, {
@@ -145,10 +152,10 @@ export default {
         variant: 'success'
       })
     },
-    getUser(user){
+    getUser(user) {
+      this.isLoading = true
       this.$services.service.getUserById(user).then((res) => {
-        console.log(res)
-        return res
+        this.user = res
       }).catch((error) => {
         // check if we have a string response data. these are usually custom defined on server side
         if (error.response && (typeof error.response.data === "string" || error.response.data instanceof String))
@@ -157,6 +164,8 @@ export default {
         else if (typeof error.message === "string" || error.message instanceof String) this.handleError(error.message)
         // no error message, this was unexpected
         else this.handleError("unexpected_error")
+      }).finally(() => {
+        this.isLoading = false
       })
     }
   }
@@ -170,18 +179,22 @@ export default {
 }
 
 #navigation {
-  max-width: 1400px;
+  /*max-width: 1400px;*/
   margin-left: auto;
   margin-right: auto;
+  box-shadow: 0 0 1em rgba(0, 0, 0, 0.3);
+  background-color: #ffffff;
+  text-align: center;
 }
 
 .content {
   padding-top: 1rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  /*padding-left: 1rem;*/
+  /*padding-right: 1rem;*/
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
+  padding-bottom: 4rem;
   min-height: 100%
 }
 

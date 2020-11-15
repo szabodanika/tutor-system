@@ -55,22 +55,16 @@ export default {
   ],
   data() {
     return {
-      signup: {}
+      signup: {},
     }
   },
   mounted() {
-    if (!this.user)  {
-      this.$nuxt.$emit("error", "not_logged_in")
-      return
-    }
-    this.user.students.forEach((student) => {
-      this.students.push({value: student.id, text: `${student.firstName} ${student.lastName}`},)
-    })
   },
   methods: {
     submit() {
       this.$services.service.registerVirtualStudent(this.signup.firstname, this.signup.lastname, this.signup.rate).then((res) => {
-        this.$nuxt.$emit("success", "succesfully_created_virtual_student")
+        this.$nuxt.$emit("success", "successfully_created_virtual_student")
+        this.$nuxt.$router.push("/students")
       }).catch((error) => {
         // check if we have a string response data. these are usually custom defined on server side
         if (error.response && (typeof error.response.data === "string" || error.response.data instanceof String))

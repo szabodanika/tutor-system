@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "lesson")
-public class Lesson {
+public class Lesson implements Comparable<Lesson>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,6 +25,7 @@ public class Lesson {
     private User student;
 
     private int rate;
+
     private Date start, end;
 
     @Transient
@@ -31,18 +34,33 @@ public class Lesson {
     @Transient
     private int hours;
 
+    @Transient
+    private boolean paid;
+
     public Lesson() {
     }
 
     public int getWeek() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(this.start);
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
         return cal.get(Calendar.WEEK_OF_YEAR);
     }
 
     public int getHours() {
         final int MILLI_TO_HOUR = 1000 * 60 * 60;
         return (int) (this.end.getTime() - this.start.getTime()) / MILLI_TO_HOUR;
+    }
+
+    public boolean isPaid(){
+        int balance = this.student.getTotalPaid();
+        List<Lesson> lessons = this.student.getStudentLessons();
+        Collections.sort(lessons);
+        for(Lesson l : lessons){
+            balance -= l.getRate()*l.getHours();
+            if(l.equals(this)) return balance >= 0;
+        }
+        return false;
     }
 
     public void setHours(int hours) {
@@ -101,4 +119,8 @@ public class Lesson {
         this.end = end;
     }
 
+    @Override
+    public int compareTo(Lesson lesson) {
+        return this.getStart().compareTo(lesson.getStart());
+    }
 }

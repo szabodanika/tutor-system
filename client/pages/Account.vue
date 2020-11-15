@@ -25,10 +25,6 @@ export default {
     }
   },
   created() {
-    if (!this.user)  {
-      this.$nuxt.$emit("error", "not_logged_in")
-      return
-    }
   },
   methods: {
     getWeekNumber(date) {
@@ -42,6 +38,8 @@ export default {
       return 1 + Math.ceil((firstThursday - date) / 604800000);
     },
     signOut() {
+      this.$cookies.remove('user')
+      this.$services.service.signOut();
       this.$nuxt.$emit("event", {name:"signout"})
       this.$nuxt.$router.push("/login")
     }

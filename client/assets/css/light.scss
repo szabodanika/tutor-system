@@ -1,4 +1,4 @@
-$white: #fff !default;
+$white: #ffffff !default;
 $gray-100: #f7f7f7 !default;
 $gray-200: #e9ecef !default;
 $gray-300: #dee2e6 !default;
@@ -10,12 +10,12 @@ $gray-800: #343a40 !default;
 $gray-900: #212529 !default;
 $black: #000 !default;
 
-$primary: #f70 !default;
+$primary: #6610f2 !default;
 $secondary: #6610f2 !default;
 
 $blue: #6610f2 !default;
 $indigo: #6610f2 !default;
-$purple: #6f42c1 !default;
+$purple: #8c44d4 !default;
 $pink: #e83e8c !default;
 $red: #dc3545 !default;
 $orange: #fd7e14 !default;
@@ -58,8 +58,11 @@ $font-family-sans-serif: 'Open Sans', Roboto, -apple-system, BlinkMacSystemFont,
 @import '../../node_modules/bootstrap/scss/bootstrap';
 @import '../../node_modules/bootstrap-vue/src/index';
 
-body {
-  background: $gray-100;
+body, html {
+  background-color: #e2dbff;
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins";
 }
 
 a {
@@ -72,17 +75,59 @@ a {
 }
 
 h1, .h1 {
-  font-family: 'IBM Plex Sans SemiBold';
+  font-family: 'Poppins';
   font-weight: 600;
   color: $black;
 }
 h2, h3, h4, h5, h6, .h2, .h3, .h4, .h5, .h6 {
   color: $black;
   //font-family: 'Anton';
-  font-family: 'Open Sans';
+  font-family: 'Poppins';
   font-weight: 600;
   //font-weight: 400;
 }
+
+.card-header, .card-footer, .card-body, nav {
+  background-color: #ffffff !important;
+  border: none;
+}
+
+nav, .navbar, .navbar-light, .bg-light{
+  background-color: #ffffff !important;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 0.4rem 1.2em rgba(0, 0, 0, 0.15);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.card-body {
+  padding-bottom: 0.5rem;
+}
+
+.card-header, .card-footer, .card-header:first-child {
+  border-radius: 1rem;
+}
+
+.card-header {
+  padding-bottom: 0;
+}
+
+.btn-primary:not(.btn-sm, .btn-outline-primary, .btn-outline-danger, .btn-outline-warning, .btn-outline-info) {
+  box-shadow: 0 0.5rem 1em rgba(0, 0, 0, 0.2);
+  background-image: linear-gradient(to bottom right,$primary, $purple);
+  transition: background-image 0.2s ease-in-out;
+  -webkit-transition: background-image 0.2s ease-in-out;
+  color: $white;
+  border: none;
+}
+
+.b-avatar {
+  min-width: 2.5rem;
+}
+
 
 
 

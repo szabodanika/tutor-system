@@ -53,6 +53,28 @@ export default class Service {
     const {data} = await this.http.get(`${this.baseUrl}/login`, {params: {email, password}, withCredentials: true},)
     return data
   }
+  async signOut() {
+    const {data} = await this.http.get(`${this.baseUrl}/signoout`, {withCredentials: true},)
+    return data
+  }
+
+  async updateLesson(id, student, start, end, date, location) {
+    const {data} = await this.http.get(`${this.baseUrl}/savelesson`, {
+      params: {
+        id: id==-1?null:id,
+        student,
+        start,
+        end,
+        date,
+        location,
+      }, withCredentials: true
+    },)
+    return data
+  }
+
+  async saveLesson(student, start, end, date, location) {
+    return this.updateLesson(-1, student, start, end, date, location)
+  }
 
   async updatePayment(id, tutor, student, amount, cash, transaction) {
     const {data} = await this.http.get(`${this.baseUrl}/savepayment`, {

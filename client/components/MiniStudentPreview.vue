@@ -1,24 +1,50 @@
 <template>
-  <b-card no-body id='container'>
-    <b-col no-gutters v-if='studentData'>
-      <b-row no-gutters>
-        <b-col>
-          <div class="d-flex align-items-center">
-            <b-avatar :text="studentData.firstName.substr(0,1) + studentData.lastName.substr(0,1)"
-                      variant="primary"></b-avatar>
-            <span style='margin-left: 1rem'>{{studentData.firstName}} {{studentData.lastName}}</span>
-          </div>
-        </b-col>
-      </b-row>
-      <br>
-      <b-row>
-        £{{ studentData.totalDebt }} debt<br>
-        £{{ studentData.rate }} per hour<br>
-        {{ studentData.totalHours }} hour{{ studentData.totalHours < 2 ? '' : 's' }}<br>
-      </b-row>
-    </b-col>
+  <b-overlay :show="isLoading" rounded="sm" style='max-width: 14rem' :rounded='true' variant='transparent'
+             spinner-type='grow'  :opacity="1.0"  blur="1rem">
+    <b-card no-body id='container' style='padding-top: 0'>
+      <b-col v-if='studentData' >
+        <b-row no-gutters align-v='center' >
+          <b-col align='left' cols='2'>
+            <b-avatar
+                :text="initials"
+                variant="primary"></b-avatar>
+          </b-col>
+          <b-col align='left'  cols='10'>
+            <span style='margin-left: 1rem'>{{ studentData.firstName }} {{ studentData.lastName }}</span>
+          </b-col>
+          <br>
+          <br>
+          <br>
+          <b-col cols='6' style='padding-left: 1rem; padding-right: 1rem'>
+            <b-row>
+              Unpaid
+            </b-row>
+            <b-row>
+              Rate
+            </b-row>
+            <b-row>
+              Hours
+            </b-row>
+          </b-col>
+          <b-col cols='6'>
+            <b-row>
+              £{{ studentData.totalDebt }}
+            </b-row>
+            <b-row>
+              £{{ studentData.rate }}
+            </b-row>
+            <b-row>
+              {{ studentData.totalHours }}
+            </b-row>
+          </b-col>
+        </b-row>
+        <b-row no-gutters align-v='center'>
 
-  </b-card>
+        </b-row>
+      </b-col>
+
+    </b-card>
+  </b-overlay>
 </template>
 
 <script>
@@ -29,7 +55,9 @@ export default {
   ],
   data() {
     return {
-      studentData: null
+      studentData: null,
+      initials: "",
+      isLoading: true,
     }
   },
   created() {
@@ -45,7 +73,11 @@ export default {
           this.studentData.totalHours += lesson.hours
         })
 
+        if (this.studentData.firstName) this.initials += this.studentData.firstName.substr(0, 1)
+        if (this.studentData.lastName) this.initials += this.studentData.lastName.substr(0, 1)
+
         this.$emit("loaded")
+        this.isLoading = false
       }).catch((error) => {
         if (!error.response) {
           this.$bvToast.toast("Unexpected error while loading student data", {
@@ -68,8 +100,9 @@ export default {
 
 <style scoped>
 #container {
+  width: 14rem;
   padding: 0.5rem;
-  min-width: 200px;
   font-weight: 400;
+  height: 10rem;
 }
 </style>

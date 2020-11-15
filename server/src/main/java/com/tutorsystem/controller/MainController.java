@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
@@ -46,106 +48,9 @@ public class MainController {
         return "hello";
     }
 
-    @GetMapping(value = "/init")
-    Object init() {
-        User tutor1 = new User();
-        tutor1.setFirstName("Test");
-        tutor1.setLastName("Tutor");
-        tutor1.setRegistered(new Date());
-        tutor1.setRate(12);
-        tutor1.setEmail("testtutor@email.com");
-        tutor1.setPassword("testpass123");
-
-        User student1 = new User();
-        student1.setFirstName("Test");
-        student1.setLastName("Student 1");
-        student1.setRegistered(new Date());
-        student1.setTutor(tutor1);
-        student1.setEmail("teststudent1@email.com");
-        student1.setPassword("testpass123");
-        student1.setRate(student1.getTutor().getRate());
-
-        User student2 = new User();
-        student2.setFirstName("Test");
-        student2.setLastName("Student 2");
-        student2.setRegistered(new Date());
-        student2.setTutor(tutor1);
-        student2.setEmail("teststudent2@email.com");
-        student2.setPassword("testpass123");
-        student2.setRate(student1.getTutor().getRate());
-
-        tutor1.setStudents(Arrays.asList(new User[]{student1, student2}));
-
-        Lesson lesson1 = new Lesson();
-        lesson1.setTutor(tutor1);
-        lesson1.setStudent(student1);
-        lesson1.setRate(student1.getRate());
-        lesson1.setStart(new Date());
-        lesson1.setEnd(new Date(new Date().getTime() + 3600000));
-
-        Lesson lesson2 = new Lesson();
-        lesson2.setTutor(tutor1);
-        lesson2.setStudent(student1);
-        lesson2.setRate(student1.getRate());
-        lesson2.setStart(new Date());
-        lesson2.setEnd(new Date(new Date().getTime() + 7200000));
-
-        Lesson lesson3 = new Lesson();
-        lesson3.setTutor(tutor1);
-        lesson3.setStudent(student1);
-        lesson3.setRate(student1.getRate());
-        lesson3.setStart(new Date());
-        lesson3.setEnd(new Date(new Date().getTime() + 3600000));
-
-        Lesson lesson4 = new Lesson();
-        lesson4.setTutor(tutor1);
-        lesson4.setStudent(student2);
-        lesson4.setRate(student2.getRate());
-        lesson4.setStart(new Date());
-        lesson4.setEnd(new Date(new Date().getTime() + 7200000));
-
-        student1.setStudentLessons(Arrays.asList(new Lesson[]{lesson1, lesson2, lesson3}));
-        student2.setStudentLessons(Arrays.asList(new Lesson[]{lesson4}));
-        tutor1.setTutorLessons(Arrays.asList(new Lesson[]{lesson1, lesson2, lesson3, lesson4}));
-
-        Payment payment1 = new Payment();
-        payment1.setStudent(student1);
-        payment1.setTutor(tutor1);
-        payment1.setAmount(10);
-
-        Payment payment2 = new Payment();
-        payment2.setStudent(student1);
-        payment2.setTutor(tutor1);
-        payment2.setAmount(20);
-
-        Payment payment3 = new Payment();
-        payment3.setStudent(student2);
-        payment3.setTutor(tutor1);
-        payment3.setAmount(12);
-
-        student1.setPaymentsSent(Arrays.asList(new Payment[]{payment1, payment2}));
-        student2.setPaymentsSent(Arrays.asList(new Payment[]{payment3}));
-        tutor1.setPaymentsReceived(Arrays.asList(new Payment[]{payment1, payment2, payment3}));
-
-        users.save(tutor1);
-        users.save(student1);
-        users.save(student2);
-
-        lessons.save(lesson1);
-        lessons.save(lesson2);
-        lessons.save(lesson3);
-        lessons.save(lesson4);
-
-        payments.save(payment1);
-        payments.save(payment2);
-        payments.save(payment3);
-
-        return new ResponseEntity<>("database_initialised", HttpStatus.OK);
-    }
-
     @GetMapping(value = "/register")
     Object register(@RequestParam String firstname,
-                    @RequestParam String lastname,
+                    @RequestParam(required = false) String lastname,
                     @RequestParam String password,
                     @RequestParam String email,
                     @RequestParam(required = false, value = "tutor", defaultValue = "-1") int tutorCode,
@@ -155,7 +60,7 @@ public class MainController {
                 return new ResponseEntity<>("email_already_registered", HttpStatus.BAD_REQUEST);
 
             if (firstname.length() < 1 || firstname.length() > 100 ||
-                    lastname.length() < 1 || lastname.length() > 100 ||
+                    (lastname != null && (lastname.length() < 1 || lastname.length() > 100 ))||
                     password.length() < 1 || password.length() > 100 ||
                     email.length() < 1 || email.length() > 100 ||
                     rate != -1 && (rate < 0 || rate > 1000 ||
@@ -197,11 +102,15 @@ public class MainController {
             ResponseEntity validityResult = validateSession();
             if (validityResult != null) return validityResult;
 
-            if (firstname.length() < 1 || firstname.length() > 100 ||
-                    lastname.length() < 1 || lastname.length() > 100 ||
-                    rate != -1 && (rate < 0 || rate > 1000)
-            )
+
+            if (firstname.length() < 1 || firstname.length() > 100){
                 return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+            }
+            if(lastname != null) {
+                if (lastname.length() < 1 || lastname.length() > 100 ) {
+                    return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+                }
+            }
 
             User newUser = new User();
             newUser.setFirstName(firstname);
@@ -229,12 +138,13 @@ public class MainController {
         if (configService.get().isSignupOpen()) {
 
             User user = users.findByActivationCode(activationCode);
-            if(user == null){
+            if (user == null) {
                 return new ResponseEntity<>("invalid_activation_code", HttpStatus.OK);
             }
-            if(user.isActivated()){
+            if (user.isActivated()) {
                 return new ResponseEntity<>("user_already_activated", HttpStatus.OK);
             }
+
             user.setPassword(this.hashPassword(password));
             user.setEmail(email);
             user.setActivated(true);
@@ -243,7 +153,6 @@ public class MainController {
             return new ResponseEntity<>("succesfully_activated", HttpStatus.OK);
         } else return new ResponseEntity<>("signup_closed", HttpStatus.NOT_FOUND);
     }
-
 
 
     @GetMapping(value = "/login")
@@ -262,6 +171,16 @@ public class MainController {
                 return new ResponseEntity<>("invalid_credentials", HttpStatus.FORBIDDEN);
             }
         } else return new ResponseEntity<>("login_closed", HttpStatus.NOT_FOUND);
+    }
+
+
+    @GetMapping(value = "/signout")
+    Object postRegister() {
+        ResponseEntity validityResult = validateSession();
+        if (validityResult != null) return validityResult;
+
+        this.userSessionBean.signOut();
+        return new ResponseEntity<>("signed_out_successfully", HttpStatus.OK);
     }
 
     @GetMapping(value = "/user")
@@ -381,6 +300,49 @@ public class MainController {
         return new ResponseEntity<>("payment_created", HttpStatus.OK);
     }
 
+    @GetMapping(value = "/savelesson")
+    Object postPayment(@RequestParam(required = false, defaultValue = "-1") Long id,
+                       @RequestParam(name = "student") Long studentId,
+                       @RequestParam String date,
+                       @RequestParam String start,
+                       @RequestParam String end,
+                       @RequestParam String location) {
+
+        ResponseEntity validityResult = validateSession();
+        if (validityResult != null) return validityResult;
+
+        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date startDate;
+        Date endDate;
+        try {
+            startDate = parser.parse(date + " " + start);
+            endDate = parser.parse(date + " " + end);
+        } catch (ParseException e) {
+            return new ResponseEntity<>("invalid_date", HttpStatus.NOT_FOUND);
+        }
+
+        User student = users.findById(studentId);
+        if (student == null)
+            return new ResponseEntity<>("student_not_found", HttpStatus.NOT_FOUND);
+
+        Lesson lesson;
+
+        if (id != -1) {
+            lesson = lessons.findById(id);
+            if (lesson == null)
+                return new ResponseEntity<>("lesson_not_found", HttpStatus.NOT_FOUND);
+        } else {
+            lesson = new Lesson();
+            lesson.setTutor(userSessionBean.getUser());
+            lesson.setStudent(student);
+            lesson.setStart(startDate);
+            lesson.setEnd(endDate);
+        }
+
+        lessons.save(lesson);
+        return new ResponseEntity<>("payment_created", HttpStatus.OK);
+    }
+
     @GetMapping(value = "/paymentssent")
     Object getPaymentsSent(@RequestParam(value = "user") Long userId) {
         ResponseEntity validityResult = validateSession(userId);
@@ -465,7 +427,7 @@ public class MainController {
         return hashtext;
     }
 
-    private int generateActivationCode(){
+    private int generateActivationCode() {
         return new Random().nextInt(configService.get().getActivationCodeMaxValue());
     }
 }

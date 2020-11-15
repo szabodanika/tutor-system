@@ -4,9 +4,10 @@
       <b-row no-gutters>
         <b-col align='left'>
           <div class="d-flex align-items-center">
-            <b-avatar :text="studentData.firstName.substr(0,1) + studentData.lastName.substr(0,1)"
-                      variant="primary"></b-avatar>
-            <span style='margin-left: 1rem'>{{ studentData.firstName }} {{ studentData.lastName }}</span>
+            <b-avatar
+                :text="initials"
+                variant="primary"></b-avatar>
+            <span style='margin-left: 1rem'>{{studentData.firstName}} {{studentData.lastName}}</span>
           </div>
         </b-col>
         <b-col align='right'>
@@ -21,7 +22,7 @@
     </template>
     <b-col no-gutters>
       <b-row>
-        <b-col cols='4'>
+        <b-col cols='5'>
           <b-row>
             Phone
           </b-row>
@@ -38,7 +39,7 @@
             Hours so far
           </b-row>
           <b-row>
-            Current debt
+            Unpaid
           </b-row>
           <b-row>
             Total paid
@@ -94,7 +95,8 @@ export default {
   ],
   data() {
     return {
-      studentData: null
+      studentData: null,
+      initials: ""
     }
   },
   created() {
@@ -109,6 +111,9 @@ export default {
         this.studentData.studentLessons.forEach((lesson) => {
           this.studentData.totalHours += lesson.hours
         })
+
+        if(this.studentData.firstName) this.initials += this.studentData.firstName.substr(0,1)
+        if(this.studentData.lastName) this.initials += this.studentData.lastName.substr(0,1)
 
         this.$emit("loaded")
       }).catch((error) => {
@@ -141,7 +146,7 @@ export default {
 <style scoped>
 #container {
   /*padding: 0.5rem;*/
-  min-width: 200px;
+  /*min-width: 200px;*/
   font-weight: 400;
   /*max-height: 20rem;*/
 }

@@ -10,12 +10,12 @@ $gray-800: #8290aa !default;
 $gray-900: #dfe8f5 !default;
 $black: #fff !default;
 
-$primary: $gray-700 !default;
-$secondary: $gray-600 !default;
+$primary: #6610f2 !default;
+$secondary: #6610f2 !default;
 
 $blue: #6610f2 !default;
 $indigo: #6610f2 !default;
-$purple: #6f42c1 !default;
+$purple: #8c44d4 !default;
 $pink: #e83e8c !default;
 $red: #dc3545 !default;
 $orange: #fd7e14 !default;
@@ -24,6 +24,7 @@ $green: #28a745 !default;
 $teal: #20c997 !default;
 $cyan: #6610f2 !default;
 
+
 $success: $green !default;
 $info: $cyan !default;
 $warning: $yellow !default;
@@ -31,4 +32,103 @@ $danger: $red !default;
 $light: $gray-100 !default;
 $dark: $gray-800 !default;
 
-@import 'base';
+$theme-colors: () !default;
+$theme-colors: map-merge(
+                (
+                        'primary': $primary,
+                        'secondary': $secondary,
+                        'success': $success,
+                        'info': $info,
+                        'warning': $warning,
+                        'danger': $danger,
+                        'light': $light,
+                        'dark': $dark
+                ),
+                $theme-colors
+);
+$link-color: $gray-800;
+
+$enable-shadows: false;
+$enable-rounded: true;
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=Poppins:wght@400&family=Courier+Prime&family=PT+Serif&family=Montserrat:ital,wght@1,400;1,800&amily=Source+Code+Pro&family=Open+Sans&family=Open+Sans+Condensed:wght@300&family=Playfair+Display&family=Press+Start+2P&family=Roboto&display=swap');
+$font-family-sans-serif: 'Open Sans', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+
+
+@import '../../node_modules/bootstrap/scss/bootstrap';
+@import '../../node_modules/bootstrap-vue/src/index';
+
+body, html {
+  background-color: #1c1832;
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins";
+}
+
+a {
+  text-decoration: none !important;
+}
+
+* {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+h1, .h1 {
+  font-family: 'Poppins';
+  font-weight: 600;
+  color: $black;
+}
+h2, h3, h4, h5, h6, .h2, .h3, .h4, .h5, .h6 {
+  color: $black;
+  //font-family: 'Anton';
+  font-family: 'Poppins';
+  font-weight: 600;
+  //font-weight: 400;
+}
+
+.card-header, .card-footer, .card-body, nav {
+  background-color: $white !important;
+  border: none;
+}
+
+nav, .navbar, .navbar-light, .bg-light{
+  background-color: $white !important;
+}
+
+.card {
+  border-color: $gray-100;
+  //box-shadow: 0 0.4rem 1.2em rgb(184, 122, 196, 0.15);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.card-body {
+  padding-bottom: 0.5rem;
+}
+
+.card-header, .card-footer, .card-header:first-child {
+  border-radius: 1rem;
+}
+
+.card-header {
+  padding-bottom: 0;
+}
+
+.btn-primary, .btn-secondary {
+  box-shadow: 0 0.5rem 1em rgba(0, 0, 0, 0.2);
+  background-image: linear-gradient(to bottom right,$primary, $purple);
+  transition: background-image 0.2s ease-in-out;
+  -webkit-transition: background-image 0.2s ease-in-out;
+  color: $white;
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.b-avatar {
+  min-width: 2.5rem;
+}
+
+
+
+

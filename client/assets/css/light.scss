@@ -115,7 +115,11 @@ nav, .navbar, .navbar-light, .bg-light{
   padding-bottom: 0;
 }
 
-.btn-primary:not(.btn-sm, .btn-outline-primary, .btn-outline-danger, .btn-outline-warning, .btn-outline-info) {
+.btn {
+  border-radius: 0.5rem;
+}
+
+.btn-primary, .btn-secondary {
   box-shadow: 0 0.5rem 1em rgba(0, 0, 0, 0.2);
   background-image: linear-gradient(to bottom right,$primary, $purple);
   transition: background-image 0.2s ease-in-out;

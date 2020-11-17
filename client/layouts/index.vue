@@ -143,7 +143,9 @@ export default {
         'successfully_registered': 'Registration successful. You can log in now.',
         'successfully_created_virtual_student': 'Student successfully added.',
         'successfully_activated': 'Successfully activated account.',
-        'successfully_saved_lesson': 'Lesson saved successfully.'
+        'successfully_saved_lesson': 'Lesson saved successfully.',
+        'successfully_locked_lesson': 'Lesson locked successfully.',
+        'successfully_unlocked_lesson': 'Lesson unlocked successfully.'
       }
 
       this.$bvToast.toast(msg in messages ? messages[msg] : msg, {

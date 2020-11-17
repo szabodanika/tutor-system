@@ -28,6 +28,10 @@ public class Lesson implements Comparable<Lesson>{
 
     private Date start, end;
 
+    private String location;
+
+    private boolean locked = false;
+
     @Transient
     private int week;
 
@@ -61,6 +65,26 @@ public class Lesson implements Comparable<Lesson>{
             if(l.equals(this)) return balance >= 0;
         }
         return false;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
+    public void setPaid(boolean paid) {
+        this.paid = paid;
     }
 
     public void setHours(int hours) {

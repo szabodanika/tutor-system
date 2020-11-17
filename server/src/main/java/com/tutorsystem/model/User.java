@@ -17,7 +17,7 @@ public class User {
     private String firstName, lastName, email, phone;
     private Date registered;
     private int rate, tutorCode;
-    private boolean activated, disabled, admin;
+    private boolean activated, disabled, admin, tutorAccount;
 
     @JsonIgnore
     private String password;
@@ -45,8 +45,6 @@ public class User {
     @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL)
     @JsonIgnoreProperties("tutor")
     private List<Payment> paymentsReceived;
-
-    private boolean isTutor = false;
 
     @Transient
     private int totalPaid;
@@ -191,12 +189,12 @@ public class User {
         this.registered = registered;
     }
 
-    public boolean isTutor() {
-        return !this.students.isEmpty();
+    public boolean isTutorAccount() {
+        return tutorAccount;
     }
 
-    public void setTutor(boolean tutor) {
-        isTutor = tutor;
+    public void setTutorAccount(boolean tutorAccount) {
+        this.tutorAccount = tutorAccount;
     }
 
     public User getTutor() {

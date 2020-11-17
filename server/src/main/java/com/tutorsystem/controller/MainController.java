@@ -1,6 +1,5 @@
 package com.tutorsystem.controller;
 
-import com.tutorsystem.model.Config;
 import com.tutorsystem.model.Lesson;
 import com.tutorsystem.model.Payment;
 import com.tutorsystem.model.User;
@@ -19,7 +18,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 
@@ -80,11 +78,11 @@ public class MainController {
                 User tutor = users.findByTutorCode(tutorCode);
                 if (tutor == null)
                     return new ResponseEntity<>("invalid_tutor_code", HttpStatus.NOT_FOUND);
-                newUser.setTutor(false);
+                newUser.setTutorAccount(false);
                 newUser.setTutor(tutor);
                 newUser.setRate(tutor.getRate());
             } else {
-                newUser.setTutor(true);
+                newUser.setTutorAccount(true);
                 newUser.setTutorCode(users.generateTutorCode());
                 newUser.setRate(rate);
             }
@@ -95,7 +93,7 @@ public class MainController {
     }
 
     @GetMapping(value = "/registervirtualstudent")
-    Object register(@RequestParam String firstname,
+    Object registerVirtualStudent(@RequestParam String firstname,
                     @RequestParam(required = false) String lastname,
                     @RequestParam int rate) {
         if (configService.get().isSignupOpen()) {
@@ -118,7 +116,7 @@ public class MainController {
             newUser.setRegistered(new Date());
 
             User tutor = this.userSessionBean.getUser();
-            newUser.setTutor(false);
+            newUser.setTutorAccount(false);
             newUser.setTutor(tutor);
             newUser.setRate(rate);
             newUser.setActivationCode(this.generateActivationCode());
@@ -131,7 +129,7 @@ public class MainController {
 
 
     @GetMapping(value = "/activatestudent")
-    Object register(@RequestParam(name = "tutorcode") int tutorCode,
+    Object activateStudent(@RequestParam(name = "tutorcode") int tutorCode,
                     @RequestParam(name = "activationcode") int activationCode,
                     @RequestParam String email,
                     @RequestParam String password) {
@@ -175,7 +173,7 @@ public class MainController {
 
 
     @GetMapping(value = "/signout")
-    Object postRegister() {
+    Object postSignOut() {
         ResponseEntity validityResult = validateSession();
         if (validityResult != null) return validityResult;
 
@@ -233,35 +231,6 @@ public class MainController {
     }
 
 
-    @PostMapping(value = "/lesson")
-    Object postLesson(@RequestParam Long studentId, @RequestParam Long tutorId, @RequestParam Date start,
-                      @RequestParam Date end) {
-        ResponseEntity validityResult = validateSession(tutorId);
-        if (validityResult != null) return validityResult;
-
-
-        User student = users.findById(studentId);
-        if (student == null)
-            return new ResponseEntity<>("student_not_found", HttpStatus.NOT_FOUND);
-
-        User tutor = users.findById(tutorId);
-        if (tutor == null)
-            return new ResponseEntity<>("tutor_not_found", HttpStatus.NOT_FOUND);
-
-        if (start.after(end))
-            return new ResponseEntity<>("invalid_dates", HttpStatus.NOT_FOUND);
-
-        Lesson lesson = new Lesson();
-        lesson.setStudent(student);
-        lesson.setTutor(tutor);
-        lesson.setStart(start);
-        lesson.setEnd(end);
-        lesson.setRate(student.getRate());
-        lessons.save(lesson);
-
-        return new ResponseEntity<>("lesson_created", HttpStatus.OK);
-    }
-
     @GetMapping(value = "/savepayment")
     Object postPayment(@RequestParam(required = false, defaultValue = "-1") Long id,
                        @RequestParam(name = "tutor") Long tutorId,
@@ -301,7 +270,7 @@ public class MainController {
     }
 
     @GetMapping(value = "/savelesson")
-    Object postPayment(@RequestParam(required = false, defaultValue = "-1") Long id,
+    Object postLesson(@RequestParam(required = false, defaultValue = "-1") Long id,
                        @RequestParam(name = "student") Long studentId,
                        @RequestParam String date,
                        @RequestParam String start,
@@ -333,15 +302,64 @@ public class MainController {
                 return new ResponseEntity<>("lesson_not_found", HttpStatus.NOT_FOUND);
         } else {
             lesson = new Lesson();
-            lesson.setTutor(userSessionBean.getUser());
-            lesson.setStudent(student);
-            lesson.setStart(startDate);
-            lesson.setEnd(endDate);
         }
 
+        lesson.setTutor(userSessionBean.getUser());
+        lesson.setStudent(student);
+        lesson.setStart(startDate);
+        lesson.setEnd(endDate);
+        lesson.setLocation(location);
+
         lessons.save(lesson);
-        return new ResponseEntity<>("payment_created", HttpStatus.OK);
+        return new ResponseEntity<>("lesson_created", HttpStatus.OK);
     }
+
+    @GetMapping(value = "/getlesson")
+    Object getLessonById(@RequestParam Long id) {
+
+        ResponseEntity validityResult = validateSession();
+        if (validityResult != null) return validityResult;
+
+        Lesson lesson = lessons.findById(id);
+        if (lesson == null)
+            return new ResponseEntity<>("lesson_not_found", HttpStatus.NOT_FOUND);
+
+        return lesson;
+    }
+
+
+    @GetMapping(value = "/locklesson")
+    Object lockLesson(@RequestParam Long id) {
+
+        ResponseEntity validityResult = validateSession();
+        if (validityResult != null) return validityResult;
+
+        Lesson lesson = lessons.findById(id);
+            if (lesson == null)
+                return new ResponseEntity<>("lesson_not_found", HttpStatus.NOT_FOUND);
+
+        lesson.setLocked(true);
+        lessons.save(lesson);
+        return new ResponseEntity<>("lesson_locked", HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/unlocklesson")
+    Object unlockLesson(@RequestParam Long id) {
+
+        ResponseEntity validityResult = validateSession();
+        if (validityResult != null) return validityResult;
+
+        Lesson lesson = lessons.findById(id);
+        if (lesson == null)
+            return new ResponseEntity<>("lesson_not_found", HttpStatus.NOT_FOUND);
+
+        lesson.setLocked(false);
+        lessons.save(lesson);
+        return new ResponseEntity<>("lesson_unlocked", HttpStatus.OK);
+    }
+
+
+
 
     @GetMapping(value = "/paymentssent")
     Object getPaymentsSent(@RequestParam(value = "user") Long userId) {

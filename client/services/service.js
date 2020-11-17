@@ -58,10 +58,10 @@ export default class Service {
     return data
   }
 
-  async updateLesson(id, student, start, end, date, location) {
+  async saveLesson(id, student, start, end, date, location) {
     const {data} = await this.http.get(`${this.baseUrl}/savelesson`, {
       params: {
-        id: id==-1?null:id,
+        id,
         student,
         start,
         end,
@@ -72,8 +72,21 @@ export default class Service {
     return data
   }
 
-  async saveLesson(student, start, end, date, location) {
-    return this.updateLesson(-1, student, start, end, date, location)
+  async getLessonById(id) {
+    const {data} = await this.http.get(`${this.baseUrl}/getlesson`, {params: {id}, withCredentials: true},)
+    data.start = new Date(data.start)
+    data.end = new Date(data.end)
+    return data
+  }
+
+  async lockLesson(id) {
+    const {data} = await this.http.get(`${this.baseUrl}/locklesson`, {params: {id}, withCredentials: true},)
+    return data
+  }
+
+  async unlockLesson(id) {
+    const {data} = await this.http.get(`${this.baseUrl}/unlocklesson`, {params: {id}, withCredentials: true},)
+    return data
   }
 
   async updatePayment(id, tutor, student, amount, cash, transaction) {

@@ -11,11 +11,8 @@
           </div>
         </b-col>
         <b-col align='right'>
-          <b-button variant='outline-primary'>
+          <b-button variant='outline-primary' @click='editStudent()'>
             <b-icon icon='pencil'></b-icon>
-          </b-button>
-          <b-button variant='outline-danger'>
-            <b-icon icon='x-circle'></b-icon>
           </b-button>
         </b-col>
       </b-row>
@@ -138,6 +135,9 @@ export default {
     formatDateTime(date) {
       return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +
           date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+    },
+    editStudent(){
+      this.$nuxt.$router.push(`student/${this.studentData.id}`)
     }
   }
 }

@@ -65,6 +65,9 @@
             ></b-form-input>
           </b-form-group>
           <b-form-group label="Change password">
+            <p class='text-muted'>
+              (minimum 8 characters and one capital letter)
+            </p>
             <b-form-input
                 type='password'
                 v-model="user.password1"

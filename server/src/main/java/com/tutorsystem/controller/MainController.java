@@ -58,16 +58,16 @@ public class MainController {
                 return new ResponseEntity<>("email_already_registered", HttpStatus.BAD_REQUEST);
 
             if (firstname != null && !validateName(firstname)){
-                return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("incorrect_name", HttpStatus.BAD_REQUEST);
             }
             if (lastname != null && !validateName(lastname)){
-                return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("incorrect_name", HttpStatus.BAD_REQUEST);
             }
             if (email != null && !validateEmail(email)){
-                return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("incorrect_email", HttpStatus.BAD_REQUEST);
             }
             if (password != null && !validatePassword(password)){
-                return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("incorrect_password", HttpStatus.BAD_REQUEST);
             }
 
             User newUser = new User();
@@ -106,12 +106,11 @@ public class MainController {
 
 
             if (firstname != null && !validateName(firstname)){
-                return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("incorrect_name", HttpStatus.BAD_REQUEST);
             }
             if (lastname != null && !validateName(lastname)){
-                return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("incorrect_name", HttpStatus.BAD_REQUEST);
             }
-
             User newUser = new User();
             newUser.setFirstName(firstname);
             newUser.setLastName(lastname);
@@ -139,20 +138,20 @@ public class MainController {
         if (validityResult != null) return validityResult;
 
 
-        if (firstname != null && !validateName(firstname)){
-            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
-        }
-        if (lastname != null && !validateName(lastname)){
-            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
-        }
-        if (email != null && !validateEmail(email)){
-            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
-        }
         if (phone != null && !validatePhone(phone)){
-            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("incorrect_phone", HttpStatus.BAD_REQUEST);
         }
         if (password != null && !validatePassword(password)){
-            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("incorrect_password", HttpStatus.BAD_REQUEST);
+        }
+        if (firstname != null && !validateName(firstname)){
+            return new ResponseEntity<>("incorrect_name", HttpStatus.BAD_REQUEST);
+        }
+        if (lastname != null && !validateName(lastname)){
+            return new ResponseEntity<>("incorrect_name", HttpStatus.BAD_REQUEST);
+        }
+        if (email != null && !validateEmail(email)){
+            return new ResponseEntity<>("incorrect_email", HttpStatus.BAD_REQUEST);
         }
 
         User user = userSessionBean.getUser();
@@ -181,20 +180,20 @@ public class MainController {
         if (validityResult != null) return validityResult;
 
 
-        if (firstname != null && !validateName(firstname)){
-            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
-        }
-        if (lastname != null && !validateName(lastname)){
-            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
-        }
-        if (email != null && !validateEmail(email)){
-            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
-        }
         if (phone != null && !validatePhone(phone)){
-            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("incorrect_phone", HttpStatus.BAD_REQUEST);
         }
         if (password != null && !validatePassword(password)){
-            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("incorrect_password", HttpStatus.BAD_REQUEST);
+        }
+        if (firstname != null && !validateName(firstname)){
+            return new ResponseEntity<>("incorrect_name", HttpStatus.BAD_REQUEST);
+        }
+        if (lastname != null && !validateName(lastname)){
+            return new ResponseEntity<>("incorrect_name", HttpStatus.BAD_REQUEST);
+        }
+        if (email != null && !validateEmail(email)){
+            return new ResponseEntity<>("incorrect_email", HttpStatus.BAD_REQUEST);
         }
 
         User user = userSessionBean.getUser();
@@ -228,11 +227,11 @@ public class MainController {
                 return new ResponseEntity<>("user_already_activated", HttpStatus.OK);
             }
 
-            if (email != null && !validateEmail(email)){
-                return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
-            }
             if (password != null && !validatePassword(password)){
-                return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("incorrect_password", HttpStatus.BAD_REQUEST);
+            }
+            if (email != null && !validateEmail(email)){
+                return new ResponseEntity<>("incorrect_email", HttpStatus.BAD_REQUEST);
             }
 
             user.setPassword(this.hashPassword(password));
@@ -240,7 +239,10 @@ public class MainController {
             user.setActivated(true);
             users.save(user);
 
-            return new ResponseEntity<>("succesfully_activated", HttpStatus.OK);
+            this.userSessionBean.setUser(user);
+
+            return user;
+
         } else return new ResponseEntity<>("signup_closed", HttpStatus.NOT_FOUND);
     }
 

@@ -43,6 +43,9 @@
             ></b-form-input>
           </b-form-group>
           <b-form-group label="Password">
+            <p class='text-muted'>
+              (minimum 8 characters and one capital letter)
+            </p>
             <b-form-input
                 type='password'
                 v-model="signup.password1"
@@ -83,6 +86,7 @@ export default {
       if(this.signup.password1 || this.signup._password2){
         if(this.signup.password1 != this.signup.password2) {
           this.$nuxt.$emit("error", "passwords_not_matching")
+          return
         }
       }
       this.$services.service.register(this.signup.email, this.signup.password1, this.signup.firstname,

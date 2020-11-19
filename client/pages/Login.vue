@@ -2,6 +2,12 @@
   <div id="login-container" align='middle' @keypress.enter='submitLogin'>
     <b-row v-if='!user'>
       <b-col>
+        <br>
+        <br>
+        <b-button @click='$nuxt.$router.push("/signup/student")' variant="primary">Join your tutor</b-button>
+        <b-button @click='$nuxt.$router.push("/signup/activation")' variant="primary">Activate account</b-button>
+        <br>
+        <br>
         <b-card id='login-card' align='left'>
           <template #header>
             Log in here
@@ -35,9 +41,12 @@
           <b-link>Forgot password?</b-link>
         </nuxt-link>
         <br>
+        <NuxtLink to='/signup/tutor' align='middle'>
+          Create tutor account
+        </NuxtLink>
         <br>
-        <b-button @click='$nuxt.$router.push("/signup/student")' variant="primary">Join your tutor</b-button>
-        <b-button @click='$nuxt.$router.push("/signup/tutor")' variant="primary">Create tutor account</b-button>
+        <br>
+
       </b-col>
     </b-row>
   </div>

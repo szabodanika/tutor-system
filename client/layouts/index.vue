@@ -109,7 +109,12 @@ export default {
         'signup_closed': 'Registration service has been temporarily closed.',
         'api_closed': 'Data service has been temporarily closed.',
         'passwords_not_matching': 'Your passwords are not matching.',
-        'account_disabled': 'This account has been disabled.'
+        'account_disabled': 'This account has been disabled.',
+        'incorrect_name': 'Your name cannot contain any special characters and you have to enter a first name',
+        'incorrect_email': 'Invalid email address',
+        'incorrect_phone': 'Invalid phone number',
+        'incorrect_password':
+            'Your password has to contain at least a capital letter and a number and has to at least 8 characters'
       }
       if (msg == 'not_logged_in') {
         this.$nuxt.$router.push("/login")

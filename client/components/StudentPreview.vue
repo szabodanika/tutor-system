@@ -1,16 +1,21 @@
 <template>
   <b-card id='container' v-if='studentData'>
     <template #header>
-      <b-row no-gutters>
+      <b-row no-gutters align-v='center'>
         <b-col align='left'>
           <div class="d-flex align-items-center">
             <b-avatar
                 :text="initials"
                 variant="primary"></b-avatar>
-            <span style='margin-left: 1rem'>{{studentData.firstName}} {{studentData.lastName}}</span>
+            <span style='margin-left: 1rem'>{{ studentData.firstName }} {{ studentData.lastName }}</span>
           </div>
         </b-col>
-        <b-col align='right'>
+        <b-col v-if='studentData.disabled' cols='3' align='right'>
+          <h6 class='text-muted'>Disabled
+            <b-icon icon='lock'></b-icon>
+          </h6>
+        </b-col>
+        <b-col cols='2' align='right'>
           <b-button variant='outline-primary' @click='editStudent()'>
             <b-icon icon='pencil'></b-icon>
           </b-button>
@@ -50,10 +55,10 @@
         </b-col>
         <b-col>
           <b-row>
-            {{ studentData.phone?studentData.phone:"Not added yet" }}
+            {{ studentData.email ? studentData.email : "Not added yet" }}
           </b-row>
           <b-row>
-            {{ studentData.email?studentData.email:"Not added yet"  }}
+            {{ studentData.phone ? studentData.phone : "Not added yet" }}
           </b-row>
           <b-row>
             {{ formatDate(studentData.registered) }}
@@ -74,7 +79,7 @@
             £{{ studentData.rate }} per hour
           </b-row>
           <b-row v-if='!studentData.activated'>
-            {{ studentData.activationCode  }}
+            {{ studentData.activationCode }}
           </b-row>
 
         </b-col>
@@ -88,7 +93,7 @@
 export default {
   name: "StudentPreview",
   props: [
-      'student',
+    'student',
   ],
   data() {
     return {
@@ -109,8 +114,8 @@ export default {
           this.studentData.totalHours += lesson.hours
         })
 
-        if(this.studentData.firstName) this.initials += this.studentData.firstName.substr(0,1)
-        if(this.studentData.lastName) this.initials += this.studentData.lastName.substr(0,1)
+        if (this.studentData.firstName) this.initials += this.studentData.firstName.substr(0, 1)
+        if (this.studentData.lastName) this.initials += this.studentData.lastName.substr(0, 1)
 
         this.$emit("loaded")
       }).catch((error) => {
@@ -136,7 +141,7 @@ export default {
       return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +
           date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
     },
-    editStudent(){
+    editStudent() {
       this.$nuxt.$router.push(`student/${this.studentData.id}`)
     }
   }

@@ -96,7 +96,7 @@ export default {
         this.$services.service.getLessonById(id).then((res) => {
           this.lesson = res
           this.lesson.date =
-              `${this.lesson.start.getFullYear()}-${this.lesson.start.getMonth()}-${this.lesson.start.getDate()}`
+              `${this.lesson.start.getFullYear()}-${this.lesson.start.getMonth()+1}-${this.lesson.start.getDate()}`
           this.lesson.start =
               `${this.lesson.start.getHours()}:${this.lesson.start.getMinutes()}:${this.lesson.start.getSeconds()}`
           this.lesson.end = `${this.lesson.end.getHours()}:${this.lesson.end.getMinutes()}:${this.lesson.end.getSeconds()}`

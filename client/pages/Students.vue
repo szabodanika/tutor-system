@@ -1,6 +1,6 @@
 <template>
   <b-overlay :show='isLoading' v-if='user' id="container" :rounded='true'
-             spinner-type='grow'  :opacity="1.0"  blur="1rem">
+             spinner-type='grow' variant='transparent'  :opacity="1.0"  blur="1rem">
     <b-row align='middle' id='tutorCode'>
       <b-col>
         <b-card>

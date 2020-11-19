@@ -10,25 +10,24 @@
       </b-col>
     </b-row>
 
-    <b-button
-        @click='extraWeeksBefore.push(week-(extraWeeksBefore.length+1)); extraWeeksBefore = extraWeeksBefore.sort()'>
-      <b-icon icon='arrow-left'></b-icon>
-      Previous week
-    </b-button>
+    <b-row>
+      <b-col align='left'>
+        <b-button
+            @click='week--'>
+          <b-icon icon='arrow-left'></b-icon>
+          Previous week
+        </b-button>
+      </b-col>
+      <b-col align='right'>
+        <b-button @click='week++'>Next week
+          <b-icon
+              icon='arrow-right'></b-icon>
+        </b-button>
+      </b-col>
+    </b-row>
+
     <br>
-    <br>
-    <WeekView class='weekListItem' v-if='user' :user='user' @error='handleError' :tutor='user.id' :week='week' v-for='(week, index) in
-    extraWeeksBefore'
-              v-bind:key='index'/>
     <WeekView class='weekListItem' v-if='user' :user='user' @error='handleError' :tutor='user.id' :week='week'/>
-    <WeekView class='weekListItem' v-if='user' :user='user' @error='handleError' :tutor='user.id' :week='week+1'/>
-    <WeekView class='weekListItem' v-if='user' :user='user' @error='handleError' :tutor='user.id' :week='week'
-              v-for='(week, index) in extraWeeksAfter'
-              v-bind:key='index'/>
-    <b-button @click='extraWeeksAfter.push(week+extraWeeksAfter.length+2)'>Next week
-      <b-icon
-          icon='arrow-right'></b-icon>
-    </b-button>
   </div>
 </template>
 
@@ -71,7 +70,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .weekListItem {
   margin-bottom: 2rem;
 }

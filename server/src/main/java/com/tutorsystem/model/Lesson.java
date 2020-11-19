@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "lesson")
-public class Lesson implements Comparable<Lesson>{
+public class Lesson implements Comparable<Lesson> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,7 +36,7 @@ public class Lesson implements Comparable<Lesson>{
     private int week;
 
     @Transient
-    private int hours;
+    private float hours;
 
     @Transient
     private boolean paid;
@@ -51,18 +51,19 @@ public class Lesson implements Comparable<Lesson>{
         return cal.get(Calendar.WEEK_OF_YEAR);
     }
 
-    public int getHours() {
-        final int MILLI_TO_HOUR = 1000 * 60 * 60;
-        return (int) (this.end.getTime() - this.start.getTime()) / MILLI_TO_HOUR;
+    public float getHours() {
+        final float MILLI_TO_HOUR = 1000 * 60 * 60;
+        float diff = this.end.getTime() - this.start.getTime();
+        return diff / MILLI_TO_HOUR;
     }
 
-    public boolean isPaid(){
+    public boolean isPaid() {
         int balance = this.student.getTotalPaid();
         List<Lesson> lessons = this.student.getStudentLessons();
         Collections.sort(lessons);
-        for(Lesson l : lessons){
-            balance -= l.getRate()*l.getHours();
-            if(l.equals(this)) return balance >= 0;
+        for (Lesson l : lessons) {
+            balance -= l.getRate() * l.getHours();
+            if (l.equals(this)) return balance >= 0;
         }
         return false;
     }
@@ -87,7 +88,7 @@ public class Lesson implements Comparable<Lesson>{
         this.paid = paid;
     }
 
-    public void setHours(int hours) {
+    public void setHours(float hours) {
         this.hours = hours;
     }
 

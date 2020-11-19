@@ -34,7 +34,9 @@ public class UserService implements CustomService<User, Long>{
 
     @Override
     public void save(User user) {
-        this.repository.save(user);
+        if(!user.isDisabled()){
+            this.repository.save(user);
+        }
     }
 
     public User findByEmail(String email){

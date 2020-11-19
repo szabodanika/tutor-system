@@ -1,58 +1,69 @@
 <template>
-  <b-overlay :show="isLoading" :rounded='true' variant='transparent'
-             spinner-type='grow'  :opacity="1.0"  blur="1rem">
-    <b-card id='container' no-body>
-      <template #header>
-        <b-row align-v='center'>
-          <b-col align='left'>
-            <h2  class='text-primary'> Week {{ week }} </h2>
-          </b-col>
-          <b-col align='right'>
-            <h5>
-              {{ formatDate(date) }}
-            </h5>
-          </b-col>
-        </b-row>
-      </template>
-      <span>
-<!--          style='overflow-x: scroll'-->
-        <b-table responsive='xl' class='table' v-if='fields && fields.length > 1' hover :fields='fields'
-                 :items='days'
-                 ref='week-table'
-                 small >
-          <template #cell(day)="data" align-v='center'>
-             {{ formatDateWithDay(days[data.index].day) }}
-          </template>
-          <template #cell(gex)="data">
-            {{ data.item }}
-          </template>
 
-          <template v-slot:[`cell(${index})`]="data" v-for='index in studentsKeys'>
-            <LessonPreview v-if='data.item[index] != null'
-                           :lesson="data.item[index]" style='margin-bottom: 0'>
-            </LessonPreview>
-          </template>
+  <b-card id='container' no-body>
+    <template #header>
+      <b-row align-v='center'>
+        <b-col align='left' cols='3'>
+          <h2 class='text-primary'> Week {{ week }} </h2>
+        </b-col>
+        <b-col align='center'>
+          <div align='middle'>
+            <b-button @click='unhideStudent(student)' style='margin: 0.25rem' size='sm' v-for='(student, index) in
+              hiddenStudents'
+                      v-bind:key='index'>
+              {{ student.firstName }}
+              <b-icon icon='eye'></b-icon>
+            </b-button>
+          </div>
+        </b-col>
+        <b-col align='right' cols='3'>
+          <h5>
+            {{ formatDate(date) }}
+          </h5>
+        </b-col>
+      </b-row>
+    </template>
+    <b-overlay :show="isLoading" :rounded='true' variant='transparent'
+               spinner-type='grow' :opacity="1" blur="1rem">
+      <b-table responsive class='table' v-if='fields && fields.length > 1' hover :fields='fields'
+               :items='days'
+               ref='week-table'
+               small>
+        <template #cell(day)="data" align-v='center'>
+          <div style="white-space:nowrap">
+            {{ formatDateWithDay(days[data.index].day) }}
+          </div>
+        </template>
+        <template #cell(gex)="data">
+          {{ data.item }}
+        </template>
 
-          <template v-slot:[`head(${key})`]="data" v-for='(key, index) in studentsKeys'>
-            <StudentPreview :student='key' style='margin-bottom: 0;'>
-            </StudentPreview>
-          </template>
-        </b-table>
-        <p v-if='!lessons || lessons.length == 0' class='noLessons'>
-           No lessons this week
-        </p>
-      </span>
-    </b-card>
-  </b-overlay>
+        <template v-slot:[`cell(${index})`]="data" v-for='index in studentsKeys'>
+          <LessonPreview v-if='data.item[index] != null'
+                         :lesson="data.item[index]" style='margin-bottom: 0'>
+          </LessonPreview>
+        </template>
+
+        <template v-slot:[`head(${key})`]="data" v-for='(key, index) in studentsKeys'>
+          <MiniStudentPreview :student='key' style='margin-bottom: 0;'>
+          </MiniStudentPreview>
+        </template>
+      </b-table>
+      <p v-if='!lessons || lessons.length == 0' class='noLessons'>
+        No lessons this week
+      </p>
+    </b-overlay>
+  </b-card>
+
 </template>
 
 <script>
 import LessonPreview from "@/components/LessonPreview";
-import StudentPreview from "@/components/MiniStudentPreview";
+import MiniStudentPreview from "@/components/MiniStudentPreview";
 
 export default {
   name: "WeekView",
-  components: {StudentPreview, LessonPreview},
+  components: {MiniStudentPreview, LessonPreview},
   props: [
     'tutor',
     'week',
@@ -62,6 +73,7 @@ export default {
     week: {
       handler: function (lessons) {
         this.getLessons()
+        this.date = this.getMondayOfWeek(this.week, this.year)
       }
     },
     lessons: {
@@ -75,13 +87,16 @@ export default {
           let date2 = new Date(date.getFullYear(), date.getMonth(), date.getDate() + i)
           this.days.push({day: date2})
         }
+
         this.students = this.user.students
         this.students.forEach((student) => {
-          this.studentsKeys.push(student.id)
-          this.fields.push({
-            key: student.id.toString(),
-            label: student.firstName + " " + student.lastName
-          })
+          if (!this.hiddenStudentIds.includes(student.id)) {
+            this.studentsKeys.push(student.id)
+            this.fields.push({
+              key: student.id.toString(),
+              label: student.firstName + " " + student.lastName
+            })
+          }
         })
 
         lessons.forEach((lesson) => {
@@ -105,12 +120,15 @@ export default {
       date: this.getMondayOfWeek(this.week, this.year),
       daysOfWeek: [
         "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
-      ]
+      ],
+      hiddenStudents: [],
+      hiddenStudentIds: []
     }
   },
   mounted() {
     if (process.browser)
       this.getLessons()
+    this.$nuxt.$on("hide", this.hideStudent)
   },
   methods: {
     getLessons() {
@@ -136,7 +154,7 @@ export default {
       return 1 + Math.ceil((firstThursday - date) / 604800000);
     },
     getMondayOfWeek(w, y) {
-      if(!y) y = new Date().getFullYear()
+      if (!y) y = new Date().getFullYear()
       let firstDayOfYear = new Date(y, 0, 0).getDay()
       var monday = (w - 1) * 7 - firstDayOfYear + 1;
       console.log(monday)
@@ -158,15 +176,49 @@ export default {
       } else if (dateLastDigit == 3) {
         append = "rd"
       } else append = "th"
-      if(date.getDate() == 11 || date.getDate() == 12 || date.getDate() == 13){
+      if (date.getDate() == 11 || date.getDate() == 12 || date.getDate() == 13) {
         append = "th"
       }
-      return  this.daysOfWeek[date.getDay() == 0 ? 6 : date.getDay() - 1] + " " + date.getDate() + append
+      return this.daysOfWeek[date.getDay() == 0 ? 6 : date.getDay() - 1] + " " + date.getDate() + append
     },
     formatDateTime(date) {
       if (!date) return "error"
       return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +
           date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+    },
+    hideStudent(student) {
+      this.hiddenStudents.push(student)
+      this.hiddenStudentIds.push(student.id)
+
+      this.fields = [{key: 'day', label: ''}]
+      this.studentsKeys = []
+      this.students = this.user.students
+      this.students.forEach((student) => {
+        if (!this.hiddenStudentIds.includes(student.id)) {
+          this.studentsKeys.push(student.id)
+          this.fields.push({
+            key: student.id.toString(),
+            label: student.firstName + " " + student.lastName
+          })
+        }
+      })
+    },
+    unhideStudent(student) {
+      this.hiddenStudents.splice(this.hiddenStudents.indexOf(student), 1)
+      this.hiddenStudentIds.splice(this.hiddenStudents.indexOf(student.id), 1)
+
+      this.fields = [{key: 'day', label: ''}]
+      this.studentsKeys = []
+      this.students = this.user.students
+      this.students.forEach((student) => {
+        if (!this.hiddenStudentIds.includes(student.id)) {
+          this.studentsKeys.push(student.id)
+          this.fields.push({
+            key: student.id.toString(),
+            label: student.firstName + " " + student.lastName
+          })
+        }
+      })
     }
   },
 }

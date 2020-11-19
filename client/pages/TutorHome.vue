@@ -1,7 +1,7 @@
 <template>
   <div class="container" v-if='user'>
     <h2>
-      Welcome back, {{user.firstName}}
+      Welcome back, {{user.firstName}} ❤️
     </h2>
     <br>
     <b-row>

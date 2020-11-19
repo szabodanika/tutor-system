@@ -57,11 +57,13 @@ export default {
         this.payments = res
         this.isLoading = false
       }).catch((error) => {
-        if (!error.response && !error.response.data) {
-          this.$nuxt.$emit("error", "unexpected_error")
-        } else {
+        // check if we have a string response data. these are usually custom defined on server side
+        if (error.response && (typeof error.response.data === "string" || error.response.data instanceof String))
           this.$nuxt.$emit("error", error.response.data)
-        }
+        // check if we have an error message
+        else if (typeof error.message === "string" || error.message instanceof String) this.$nuxt.$emit("error", error.message)
+        // no error message, this was unexpected
+        else this.$nuxt.$emit("error", "unexpected_error")
       })
     },
   }

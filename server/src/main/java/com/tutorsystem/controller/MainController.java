@@ -57,14 +57,18 @@ public class MainController {
             if (users.findByEmail(email) != null)
                 return new ResponseEntity<>("email_already_registered", HttpStatus.BAD_REQUEST);
 
-            if (firstname.length() < 1 || firstname.length() > 100 ||
-                    (lastname != null && (lastname.length() < 1 || lastname.length() > 100 ))||
-                    password.length() < 1 || password.length() > 100 ||
-                    email.length() < 1 || email.length() > 100 ||
-                    rate != -1 && (rate < 0 || rate > 1000 ||
-                            (tutorCode == -1 && rate == -1))
-            )
+            if (firstname != null && !validateName(firstname)){
                 return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+            }
+            if (lastname != null && !validateName(lastname)){
+                return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+            }
+            if (email != null && !validateEmail(email)){
+                return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+            }
+            if (password != null && !validatePassword(password)){
+                return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+            }
 
             User newUser = new User();
             newUser.setFirstName(firstname);
@@ -94,20 +98,18 @@ public class MainController {
 
     @GetMapping(value = "/registervirtualstudent")
     Object registerVirtualStudent(@RequestParam String firstname,
-                    @RequestParam(required = false) String lastname,
-                    @RequestParam int rate) {
+                                  @RequestParam(required = false) String lastname,
+                                  @RequestParam int rate) {
         if (configService.get().isSignupOpen()) {
             ResponseEntity validityResult = validateSession();
             if (validityResult != null) return validityResult;
 
 
-            if (firstname.length() < 1 || firstname.length() > 100){
+            if (firstname != null && !validateName(firstname)){
                 return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
             }
-            if(lastname != null) {
-                if (lastname.length() < 1 || lastname.length() > 100 ) {
-                    return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
-                }
+            if (lastname != null && !validateName(lastname)){
+                return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
             }
 
             User newUser = new User();
@@ -127,12 +129,95 @@ public class MainController {
         } else return new ResponseEntity<>("signup_closed", HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping(value = "/editstudentaccount")
+    Object editStudentAccount(@RequestParam String firstname,
+                              @RequestParam(required = false) String lastname,
+                              @RequestParam String email,
+                              @RequestParam(required = false) String phone,
+                              @RequestParam(required = false) String password) {
+        ResponseEntity validityResult = validateSession();
+        if (validityResult != null) return validityResult;
+
+
+        if (firstname != null && !validateName(firstname)){
+            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+        }
+        if (lastname != null && !validateName(lastname)){
+            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+        }
+        if (email != null && !validateEmail(email)){
+            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+        }
+        if (phone != null && !validatePhone(phone)){
+            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+        }
+        if (password != null && !validatePassword(password)){
+            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+        }
+
+        User user = userSessionBean.getUser();
+        user.setFirstName(firstname);
+        user.setLastName(lastname);
+        user.setEmail(email);
+        user.setPhone(phone);
+        if(password != null) {
+            user.setPassword(lastname);
+        }
+
+        users.save(user);
+
+        return new ResponseEntity<>("succesfully_saved_account", HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/edittutoraccount")
+    Object editTutorAccount(@RequestParam String firstname,
+                              @RequestParam(required = false) String lastname,
+                              @RequestParam String email,
+                              @RequestParam(required = false) String phone,
+                              @RequestParam(required = false) int rate,
+                              @RequestParam(required = false) String info,
+                              @RequestParam(required = false) String password) {
+        ResponseEntity validityResult = validateSession();
+        if (validityResult != null) return validityResult;
+
+
+        if (firstname != null && !validateName(firstname)){
+            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+        }
+        if (lastname != null && !validateName(lastname)){
+            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+        }
+        if (email != null && !validateEmail(email)){
+            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+        }
+        if (phone != null && !validatePhone(phone)){
+            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+        }
+        if (password != null && !validatePassword(password)){
+            return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+        }
+
+        User user = userSessionBean.getUser();
+        user.setFirstName(firstname);
+        user.setLastName(lastname);
+        user.setEmail(email);
+        user.setPhone(phone);
+        user.setRate(rate);
+        user.setInfo(info);
+        if(password != null) {
+            user.setPassword(lastname);
+        }
+
+        users.save(user);
+
+        return new ResponseEntity<>("succesfully_saved_account", HttpStatus.OK);
+    }
+
 
     @GetMapping(value = "/activatestudent")
-    Object activateStudent(@RequestParam(name = "tutorcode") int tutorCode,
-                    @RequestParam(name = "activationcode") int activationCode,
-                    @RequestParam String email,
-                    @RequestParam String password) {
+    Object activateStudent(@RequestParam(name = "activationcode") int activationCode,
+                           @RequestParam String email,
+                           @RequestParam String password) {
         if (configService.get().isSignupOpen()) {
 
             User user = users.findByActivationCode(activationCode);
@@ -141,6 +226,13 @@ public class MainController {
             }
             if (user.isActivated()) {
                 return new ResponseEntity<>("user_already_activated", HttpStatus.OK);
+            }
+
+            if (email != null && !validateEmail(email)){
+                return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
+            }
+            if (password != null && !validatePassword(password)){
+                return new ResponseEntity<>("incorrect_details", HttpStatus.BAD_REQUEST);
             }
 
             user.setPassword(this.hashPassword(password));
@@ -181,6 +273,16 @@ public class MainController {
         return new ResponseEntity<>("signed_out_successfully", HttpStatus.OK);
     }
 
+    @GetMapping(value = "/deactivate")
+    Object deactivate() {
+        ResponseEntity validityResult = validateSession();
+        if (validityResult != null) return validityResult;
+
+        this.userSessionBean.getUser().setDisabled(true);
+        this.users.save(this.userSessionBean.getUser());
+        return new ResponseEntity<>("account_deactivated_successfully", HttpStatus.OK);
+    }
+
     @GetMapping(value = "/user")
     Object getUser(@RequestParam(required = false) Long id,
                    @RequestParam(required = false) String email) {
@@ -215,6 +317,42 @@ public class MainController {
         return tutor.getStudents();
     }
 
+    @GetMapping(value = "/savestudent")
+    Object saveStudent(@RequestParam Long id, @RequestParam int rate) {
+
+        ResponseEntity validityResult = validateSession();
+        if (validityResult != null) return validityResult;
+
+        User student = users.findById(id);
+        if (student == null)
+            return new ResponseEntity<>("student_not_found", HttpStatus.NOT_FOUND);
+        if (student.isDisabled())
+            return new ResponseEntity<>("student_disabled", HttpStatus.NOT_FOUND);
+
+        student.setRate(rate);
+        users.save(student);
+
+        return student;
+    }
+
+    @GetMapping(value = "/disablestudent")
+    Object disableStudent(@RequestParam Long id) {
+
+        ResponseEntity validityResult = validateSession();
+        if (validityResult != null) return validityResult;
+
+        User student = users.findById(id);
+        if (student == null)
+            return new ResponseEntity<>("student_not_found", HttpStatus.NOT_FOUND);
+        if (student.isDisabled())
+            return new ResponseEntity<>("student_disabled", HttpStatus.NOT_FOUND);
+
+        student.setDisabled(true);
+        users.save(student);
+
+        return student;
+    }
+
     @GetMapping(value = "/resettutorcode")
     Object resetTutorCode(@RequestParam(name = "tutor") Long tutorId) {
         ResponseEntity validityResult = validateSession(tutorId);
@@ -244,6 +382,8 @@ public class MainController {
         User student = users.findById(studentId);
         if (student == null)
             return new ResponseEntity<>("student_not_found", HttpStatus.NOT_FOUND);
+        if (student.isDisabled())
+            return new ResponseEntity<>("student_disabled", HttpStatus.NOT_FOUND);
 
         User tutor = users.findById(tutorId);
         if (tutor == null)
@@ -271,11 +411,11 @@ public class MainController {
 
     @GetMapping(value = "/savelesson")
     Object postLesson(@RequestParam(required = false, defaultValue = "-1") Long id,
-                       @RequestParam(name = "student") Long studentId,
-                       @RequestParam String date,
-                       @RequestParam String start,
-                       @RequestParam String end,
-                       @RequestParam String location) {
+                      @RequestParam(name = "student") Long studentId,
+                      @RequestParam String date,
+                      @RequestParam String start,
+                      @RequestParam String end,
+                      @RequestParam String location) {
 
         ResponseEntity validityResult = validateSession();
         if (validityResult != null) return validityResult;
@@ -293,6 +433,8 @@ public class MainController {
         User student = users.findById(studentId);
         if (student == null)
             return new ResponseEntity<>("student_not_found", HttpStatus.NOT_FOUND);
+        if (student.isDisabled())
+            return new ResponseEntity<>("student_disabled", HttpStatus.NOT_FOUND);
 
         Lesson lesson;
 
@@ -309,6 +451,7 @@ public class MainController {
         lesson.setStart(startDate);
         lesson.setEnd(endDate);
         lesson.setLocation(location);
+        lesson.setRate(student.getRate());
 
         lessons.save(lesson);
         return new ResponseEntity<>("lesson_created", HttpStatus.OK);
@@ -335,8 +478,12 @@ public class MainController {
         if (validityResult != null) return validityResult;
 
         Lesson lesson = lessons.findById(id);
-            if (lesson == null)
-                return new ResponseEntity<>("lesson_not_found", HttpStatus.NOT_FOUND);
+        if (lesson == null)
+            return new ResponseEntity<>("lesson_not_found", HttpStatus.NOT_FOUND);
+
+        User student = lesson.getStudent();
+        if (student.isDisabled())
+            return new ResponseEntity<>("student_disabled", HttpStatus.NOT_FOUND);
 
         lesson.setLocked(true);
         lessons.save(lesson);
@@ -353,12 +500,14 @@ public class MainController {
         if (lesson == null)
             return new ResponseEntity<>("lesson_not_found", HttpStatus.NOT_FOUND);
 
+        User student = lesson.getStudent();
+        if (student.isDisabled())
+            return new ResponseEntity<>("student_disabled", HttpStatus.NOT_FOUND);
+
         lesson.setLocked(false);
         lessons.save(lesson);
         return new ResponseEntity<>("lesson_unlocked", HttpStatus.OK);
     }
-
-
 
 
     @GetMapping(value = "/paymentssent")
@@ -384,8 +533,7 @@ public class MainController {
     }
 
     @GetMapping(value = "/tutorlessons")
-    Object getTutorLessons(@RequestParam(value = "tutor") Long tutorId, @RequestParam(required = false, value = "week",
-            defaultValue = "-1") int week) {
+    Object getTutorLessons(@RequestParam(value = "tutor") Long tutorId, @RequestParam(required = false, value = "week", defaultValue = "-1") int week) {
         ResponseEntity validityResult = validateSession(tutorId);
         if (validityResult != null) return validityResult;
 
@@ -447,5 +595,23 @@ public class MainController {
 
     private int generateActivationCode() {
         return new Random().nextInt(configService.get().getActivationCodeMaxValue());
+    }
+
+    private boolean validateName(String name){
+        return !name.matches("['\\/~`\\!@#\\$%\\^&\\*\\(\\)_\\-\\+=\\{\\}\\[\\]\\|;:\"\\<\\>,\\.\\?\\\\]");
+    }
+
+    private boolean validatePhone(String phone){
+        return phone.matches("^\\s*(?:\\+?(\\d{1,3}))?([-. (]*(\\d{3})[-. )]*)?((\\d{3})[-. ]*(\\d{2,4})(?:[-.x ]*" +
+                "(\\d+))?)\\s*$");
+    }
+
+    private boolean validateEmail(String email){
+        return email.matches("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9]" +
+                "(?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
+    }
+
+    private boolean validatePassword(String password){
+        return password.matches("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$");
     }
 }

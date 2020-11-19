@@ -21,17 +21,18 @@
           </b-col>
         </b-row>
       </b-form-group>
-      <b-form-group label='Location' v-if='!lesson.location || lesson.location != "Custom"'>
+      <b-form-group label='Location' >
         <b-form-select v-model="lesson.location"
                        :options="locations"></b-form-select>
       </b-form-group>
-      <b-form-group v-if='lesson.location && lesson.location == "Custom"' label='Location'>
-        <b-form-input v-model="lesson.customlocation"></b-form-input>
+      <b-form-group v-if='lesson.location && lesson.location == "Custom"'>
+        <b-form-input v-model="lesson.customlocation" placeholder='Enter custom location'></b-form-input>
       </b-form-group>
-      <p v-if='lesson.location && startTime && endTime && date'>
-        {{ lesson.location }} lesson from {{ startTime.formatted }} to {{ endTime.formatted }} on {{ date.activeYMD }}
-        with
-        {{ student.firstName }}
+      <p align='middle' v-if='student && lesson.location && startTime && endTime && lesson.date'>
+        {{ lesson.location }} lesson <br>
+        from {{ startTime.formatted }} to {{ endTime.formatted }} <br>
+        on {{date.activeYMD }}<br>
+        with {{ student.firstName }}
       </p>
       <b-button block @click='submit' variant="primary">Save</b-button>
     </b-card>
@@ -61,17 +62,27 @@ export default {
   asyncData({params, app}) {
     return {
       week: params.week,
+      id: params.id
     }
   },
   created() {
     this.user.students.forEach((student) => {
-      this.students.push({value: student, text: `${student.firstName} ${student.lastName ? student.lastName : ""}`},)
+      if (!student.disabled) {
+        if(student.id == this.id){
+          this.student = student
+        }
+        this.lesson.start = `12:00:00`
+        this.lesson.end = `13:00:00`
+        this.students.push({value: student, text: `${student.firstName} ${student.lastName ? student.lastName : ""}`})
+      }
     })
+    this.student = this.students[0].value
   },
   methods: {
     submit() {
       let location = this.lesson.location == "Custom" ? this.lesson.customlocation : this.lesson.location
-      this.$services.service.saveLesson(this.student.id, this.startTime.value, this.endTime.value, this.lesson.date,
+      this.$services.service.saveLesson(-1, this.student.id, this.startTime.value, this.endTime.value,
+          this.lesson.date,
           location).then((res) => {
         this.$nuxt.$emit("success", "successfully_saved_lesson")
         this.$nuxt.$router.push("/lessons")

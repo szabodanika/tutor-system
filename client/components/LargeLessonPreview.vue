@@ -1,29 +1,19 @@
 <template>
   <b-card no-body id='container' :class='lesson.paid?`paid`:`unpaid`'>
-    <b-row no-gutters align-v='tp['>
-      <b-col cols='12' align='middle' class='time'>
+    <b-row no-gutters align-v='center'>
+      <b-col cols='8' align='middle' class='time'>
+        {{ formatDate(lesson.start) }}
         {{ `${formatTime(lesson.start)}-${formatTime(lesson.end)} ` }}
         <br>
         {{ lesson.hours }}{{
           lesson.hours > 1 ? ` hours` :
               ` hour`
         }}
+        on {{lesson.location}}
       </b-col>
-<!--      <b-col cols='12'  align='center' :class='`text-${lesson.paid?"success":"danger"}`' id='paid'>-->
-<!--        <b-icon icon='check' v-if='lesson.paid'></b-icon>-->
-<!--        <b-icon icon='x' v-else></b-icon>-->
-<!--        {{ lesson.paid ? "Paid" : "Unpaid" }}-->
-<!--      </b-col>-->
-      <b-col cols='12' align='center' id='editButtons'>
-        <b-button-group>
-          <b-button v-if='!lesson.locked'  size="sm" variant='outline-primary' @click='editLesson()'>
-            <b-icon icon='pencil'></b-icon>
-          </b-button>
-          <b-button size="sm" :variant='`${!lesson.locked?"outline-":""}primary`' @click='switchLessonLock()'>
-            <b-icon v-if='!lesson.locked' icon='unlock'></b-icon>
-            <b-icon v-else icon='lock'></b-icon>
-          </b-button>
-        </b-button-group>
+      <b-col cols='4' align='center' id='editButtons'>
+        <b-icon variant='primary' v-if='!lesson.locked' icon='unlock'></b-icon>
+        <b-icon variant='primary' v-else icon='lock'></b-icon>
       </b-col>
     </b-row>
   </b-card>
@@ -32,7 +22,7 @@
 <script>
 
 export default {
-  name: "LessonPreview",
+  name: "LargeLessonPreview",
   props: {
     lesson: {
       hours: 0,
@@ -50,8 +40,8 @@ export default {
       let ampm = date.getHours() >= 12 ? "PM" : "AM"
       return hours + (minutes == "00" ? "" : (":" + minutes)) + ampm
     },
-    switchLessonLock(){
-      if(this.lesson.locked){
+    switchLessonLock() {
+      if (this.lesson.locked) {
         this.$services.service.unlockLesson(this.lesson.id).then((res) => {
           this.$nuxt.$emit("success", "successfully_unlocked_lesson")
           this.lesson.locked = false
@@ -78,11 +68,14 @@ export default {
           else this.$nuxt.$emit("error", "unexpected_error")
         })
       }
-
     },
-    editLesson(){
-      this.$nuxt.$router.push(`lesson/${this.lesson.id}`)
-    }
+    formatDate(date) {
+      try {
+        return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
+      } catch (e) {
+        this.$nuxt.$emit("error")
+      }
+    },
   }
 }
 </script>
@@ -91,10 +84,9 @@ export default {
 @import "assets/css/light";
 
 #container {
-  width: 10rem;
   padding: 0.5rem;
-  margin: 0;
-  overflow: hidden;
+  margin: 0.5rem;
+  min-height: 4rem;
 }
 
 .time {

@@ -1,12 +1,10 @@
 require('dotenv').config()
 
 export default {
-
   server: {
     port: process.env.PORT,
     host: process.env.HOST
   },
-
   head: {
     title: 'oktatutor',
     meta: [
@@ -18,6 +16,7 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
+  loading: false,
   css: [
     '~/assets/css/light.scss',
   ],
@@ -31,18 +30,8 @@ export default {
     'bootstrap-vue/nuxt',
     '@nuxtjs/axios',
     '@nuxtjs/dotenv',
-    // '@nuxtjs/proxy'
   ],
   proxy: {
-    // '/api': {
-    //   target: 'http://localhost',
-    //   pathRewrite: {
-    //     '^/api' : '/'
-    //   }
-    // }
-  // },
-  // axios: {
-  //   proxy: true
   },
   build: {
   }

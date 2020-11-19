@@ -11,17 +11,17 @@
             Home
           </nuxt-link>
         </b-navbar-nav>
-        <b-navbar-nav v-if='user'>
+        <b-navbar-nav v-if='user && user.tutorAccount'>
           <nuxt-link to="/lessons" class='nav-link'>
             Lessons
           </nuxt-link>
         </b-navbar-nav>
-        <b-navbar-nav v-if='user'>
+        <b-navbar-nav v-if='user && user.tutorAccount'>
           <nuxt-link to="/students" class='nav-link'>
             Students
           </nuxt-link>
         </b-navbar-nav>
-        <b-navbar-nav v-if='user'>
+        <b-navbar-nav v-if='user && user.tutorAccount'>
           <nuxt-link to="/payments" class='nav-link'>
             Payments
           </nuxt-link>
@@ -63,7 +63,7 @@ Vue.use(IconsPlugin)
 
 Vue.use(VueRouter)
 export default {
-  name: 'Index',
+  name: 'Account',
   components: {Login, Lessons},
   data() {
     return {
@@ -107,7 +107,9 @@ export default {
         'not_logged_in': 'Please log in to continue',
         'login_closed': 'Login service has been temporarily closed.',
         'signup_closed': 'Registration service has been temporarily closed.',
-        'api_closed': 'Data service has been temporarily closed.'
+        'api_closed': 'Data service has been temporarily closed.',
+        'passwords_not_matching': 'Your passwords are not matching.',
+        'account_disabled': 'This account has been disabled.'
       }
       if (msg == 'not_logged_in') {
         this.$nuxt.$router.push("/login")
@@ -115,7 +117,7 @@ export default {
       }
       this.$bvToast.toast(msg in messages ? messages[msg] : msg, {
         title: "Error",
-        toaster: 'b-toaster-top-right',
+        toaster: 'b-toaster-top-center',
         variant: 'danger'
       })
     },
@@ -124,7 +126,7 @@ export default {
 
       this.$bvToast.toast(msg in messages ? messages[msg] : msg, {
         title: "Notification",
-        toaster: 'b-toaster-top-right',
+        toaster: 'b-toaster-top-center',
         variant: 'info'
       })
     },
@@ -133,7 +135,7 @@ export default {
 
       this.$bvToast.toast(msg in messages ? messages[msg] : msg, {
         title: "Warning",
-        toaster: 'b-toaster-top-right',
+        toaster: 'b-toaster-top-center',
         variant: 'warning'
       })
     },
@@ -145,12 +147,15 @@ export default {
         'successfully_activated': 'Successfully activated account.',
         'successfully_saved_lesson': 'Lesson saved successfully.',
         'successfully_locked_lesson': 'Lesson locked successfully.',
-        'successfully_unlocked_lesson': 'Lesson unlocked successfully.'
+        'successfully_unlocked_lesson': 'Lesson unlocked successfully.',
+        'successfully_saved_student': 'Student saved successfully.',
+        'successfully_saved_payment': 'Payment saved successfully.',
+        'successfully_saved_changes': 'Changes saved successfully.'
       }
 
       this.$bvToast.toast(msg in messages ? messages[msg] : msg, {
         title: "Success",
-        toaster: 'b-toaster-top-right',
+        toaster: 'b-toaster-top-center',
         variant: 'success'
       })
     },
@@ -197,7 +202,7 @@ export default {
   margin-left: auto;
   margin-right: auto;
   padding-bottom: 4rem;
-  min-height: 100%
+  min-height: 50vh;
 }
 
 .nav-link {

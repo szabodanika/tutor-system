@@ -74,6 +74,11 @@ export default {
   },
   methods: {
     submit() {
+      if(this.user.password1 || this.user._password2){
+        if(this.user.password1 != this.user.password2) {
+          this.$nuxt.$emit("error", "passwords_not_matching")
+        }
+      }
       this.$services.service.activateStudent(this.signup.tutorcode, this.signup.activationcode, this.signup.email,
           this.signup.password1).then((res) => {
         this.$nuxt.$emit("success", "successfully_activated")

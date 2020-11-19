@@ -82,6 +82,11 @@ export default {
   },
   methods: {
     submit() {
+      if(this.user.password1 || this.user._password2){
+        if(this.user.password1 != this.user.password2) {
+          this.$nuxt.$emit("error", "passwords_not_matching")
+        }
+      }
       this.$services.service.register(this.signup.email, this.signup.password1, this.signup.firstname,
           this.signup.lastname, this.signup.tutorcode, -1).then((res) => {
         this.$nuxt.$emit('event', {

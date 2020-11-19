@@ -27,7 +27,7 @@
                 placeholder="Last name"
             ></b-form-input>
           </b-form-group>
-          <b-form-group
+          <b-input-group
               prepend="£"
               label="Student's hourly rate (this can be changed later)"
           >
@@ -37,7 +37,8 @@
                 required
                 placeholder="Hourly rate"
             ></b-form-input>
-          </b-form-group>
+          </b-input-group>
+          <br>
           <b-button block @click='submit' variant="primary">Create student</b-button>
         </b-card>
       </b-col>

@@ -121,12 +121,22 @@ nav, .navbar, .navbar-light, .bg-light{
 
 .btn-primary, .btn-secondary {
   box-shadow: 0 0.5rem 1em rgba(0, 0, 0, 0.2);
-  background-image: linear-gradient(to bottom right,$primary, $purple);
+  //background-image: linear-gradient(to bottom right,$primary, $purple);
   transition: background-image 0.2s ease-in-out;
   -webkit-transition: background-image 0.2s ease-in-out;
   color: $white;
   border: none;
 }
+
+.btn-warning, .btn-info, .btn-danger {
+  box-shadow: 0 0.5rem 1em rgba(0, 0, 0, 0.2);
+  //background-image: linear-gradient(to bottom right,$primary, $purple);
+  transition: background-image 0.2s ease-in-out;
+  -webkit-transition: background-image 0.2s ease-in-out;
+  color: $white;
+  border: none;
+}
+
 
 .b-avatar {
   min-width: 2.5rem;

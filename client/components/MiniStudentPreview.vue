@@ -1,45 +1,44 @@
 <template>
   <b-overlay :show="isLoading" rounded="sm" style='max-width: 14rem' :rounded='true' variant='transparent'
-             spinner-type='grow'  :opacity="1.0"  blur="1rem">
+             spinner-type='grow' :opacity="1.0" blur="1rem">
     <b-card no-body id='container' style='padding-top: 0'>
-      <b-col v-if='studentData' >
-        <b-row no-gutters align-v='center' >
-          <b-col align='left' cols='2'>
+      <b-col v-if='studentData'>
+        <b-row no-gutters align-v='center'>
+          <b-col align='left' cols='4'>
             <b-avatar
                 :text="initials"
                 variant="primary"></b-avatar>
           </b-col>
-          <b-col align='left'  cols='10'>
-            <span style='margin-left: 1rem'>{{ studentData.firstName }} {{ studentData.lastName }}</span>
+          <b-col align='right' cols='8'>
+            <span style='margin-left: 1rem'>{{ studentData.firstName }}</span>
           </b-col>
           <br>
           <br>
           <br>
-          <b-col cols='6' style='padding-left: 1rem; padding-right: 1rem'>
+          <b-col style='padding-left: 1rem'>
             <b-row>
-              Unpaid
+              £{{ studentData.totalDebt }} unpaid
             </b-row>
             <b-row>
-              Rate
-            </b-row>
-            <b-row>
-              Hours
+              {{ studentData.totalHours }} Total hours
             </b-row>
           </b-col>
-          <b-col cols='6'>
-            <b-row>
-              £{{ studentData.totalDebt }}
-            </b-row>
-            <b-row>
-              £{{ studentData.rate }}
-            </b-row>
-            <b-row>
-              {{ studentData.totalHours }}
-            </b-row>
+          <b-col align='center' style='margin-top: 0.5rem'>
+            <b-button-group>
+              <b-button  @click='$nuxt.$router.push(`newlesson/${studentData.id}`)' variant='outline-primary'
+                         size='sm'>
+                <b-icon icon='plus'></b-icon>
+              </b-button>
+              <b-button  @click='$nuxt.$router.push(`student/${studentData.id}`)' variant='outline-primary'
+                         size='sm'>
+                <b-icon icon='pencil'></b-icon>
+              </b-button>
+              <b-button  @click='hide' variant='outline-primary'
+                         size='sm'>
+                <b-icon icon='eye-slash'></b-icon>
+              </b-button>
+            </b-button-group>
           </b-col>
-        </b-row>
-        <b-row no-gutters align-v='center'>
-
         </b-row>
       </b-col>
 
@@ -58,6 +57,7 @@ export default {
       studentData: null,
       initials: "",
       isLoading: true,
+      hidden: false
     }
   },
   created() {
@@ -93,6 +93,9 @@ export default {
           })
         }
       })
+    },
+    hide() {
+      this.$nuxt.$emit("hide", this.studentData)
     }
   }
 }
@@ -100,9 +103,9 @@ export default {
 
 <style scoped>
 #container {
-  width: 14rem;
+  width: 10rem;
   padding: 0.5rem;
   font-weight: 400;
-  height: 10rem;
+  height: 11rem;
 }
 </style>

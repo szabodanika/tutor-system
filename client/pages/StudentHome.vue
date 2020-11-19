@@ -1,14 +1,30 @@
 <template>
   <div class="container" v-if='user'>
     <h2>
-      Welcome back, {{user.firstName}}
+      Welcome back, {{user.firstName}} ❤️
     </h2>
+    <br>
+    <br>
+    <b-row>
+      <b-col xl='6' md='12'>
+        <StudentSelf id='self' :user='user' ></StudentSelf>
+      </b-col>
+      <b-col xl='6' md='12'>
+        <TutorPreview id='tutor' :user='user' :tutor='user.tutor'></TutorPreview>
+      </b-col>
+      <b-col cols='12'>
+        <LessonList id='lessons' :user='user' ></LessonList>
+      </b-col>
+    </b-row>
     <br>
   </div>
 </template>
 
 <script>
+import TutorPreview from "@/components/TutorPreview";
+import LessonList from "@/components/LessonList";
 export default {
+  components: {LessonList, TutorPreview},
   layout: 'index',
   name: 'StudentHome',
   props: [
@@ -41,4 +57,7 @@ export default {
 </script>
 
 <style>
+#tutor, #self, #lessons {
+  margin-bottom: 3rem;
+}
 </style>

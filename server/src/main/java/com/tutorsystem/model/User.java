@@ -14,10 +14,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private String firstName, lastName, email, phone;
+    private String firstName, lastName, email, phone, info;
     private Date registered;
     private int rate, tutorCode;
-    private boolean activated, disabled, admin, tutorAccount;
+    private boolean activated = false, disabled = false, admin = false, tutorAccount = false;
 
     @JsonIgnore
     private String password;
@@ -73,6 +73,14 @@ public class User {
                 totalDebt -= payment.getAmount();
             }
         }
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
     }
 
     public int getActivationCode() {

@@ -74,8 +74,8 @@ export default {
   },
   methods: {
     submit() {
-      if(this.user.password1 || this.user._password2){
-        if(this.user.password1 != this.user.password2) {
+      if(this.signup.password1 || this.signup._password2){
+        if(this.signup.password1 != this.signup.password2) {
           this.$nuxt.$emit("error", "passwords_not_matching")
         }
       }

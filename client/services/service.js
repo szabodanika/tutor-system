@@ -12,10 +12,9 @@ export default class Service {
     this.baseUrl = baseUrl
   }
 
-  async activateStudent(tutorcode, activationcode, email, password) {
+  async activateStudent(activationcode, email, password) {
     const {data} = await this.http.get(`${this.baseUrl}/activatestudent`, {
       params: {
-        tutorcode,
         activationcode,
         email,
         password

@@ -5,17 +5,6 @@
         <b-card id='tutor-signup-card' align='left'>
           <template #header>
             Activate student account
-          </template>
-          <b-form-group
-              label="Enter the 6 digit tutor code"
-          >
-            <b-form-input
-                v-model="signup.tutorcode"
-                type="number"
-                required
-                placeholder="6 digit tutor code"
-            ></b-form-input>
-          </b-form-group>
           <b-form-group
               label="Enter the 6 digit activation code"
           >
@@ -79,7 +68,7 @@ export default {
           this.$nuxt.$emit("error", "passwords_not_matching")
         }
       }
-      this.$services.service.activateStudent(this.signup.tutorcode, this.signup.activationcode, this.signup.email,
+      this.$services.service.activateStudent(this.signup.activationcode, this.signup.email,
           this.signup.password1).then((res) => {
         this.$nuxt.$emit("success", "successfully_activated")
       }).catch((error) => {

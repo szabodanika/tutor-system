@@ -9,14 +9,9 @@
               ` hour`
         }}
       </b-col>
-<!--      <b-col cols='12'  align='center' :class='`text-${lesson.paid?"success":"danger"}`' id='paid'>-->
-<!--        <b-icon icon='check' v-if='lesson.paid'></b-icon>-->
-<!--        <b-icon icon='x' v-else></b-icon>-->
-<!--        {{ lesson.paid ? "Paid" : "Unpaid" }}-->
-<!--      </b-col>-->
       <b-col cols='12' align='center' id='editButtons'>
         <b-button-group>
-          <b-button v-if='!lesson.locked'  size="sm" variant='outline-primary' @click='editLesson()'>
+          <b-button v-if='!lesson.locked' size="sm" variant='outline-primary' @click='editLesson()'>
             <b-icon icon='pencil'></b-icon>
           </b-button>
           <b-button size="sm" :variant='`${!lesson.locked?"outline-":""}primary`' @click='switchLessonLock()'>
@@ -24,6 +19,44 @@
             <b-icon v-else icon='lock'></b-icon>
           </b-button>
         </b-button-group>
+        <b-checkbox :id='`info-${lesson.id}`' button size='sm' v-model='showInfo' pill
+                    button-variant='outline-primary'>
+          <b-icon
+              icon='info'></b-icon>
+        </b-checkbox>
+        <b-popover
+            custom-class='lesson-info-popover'
+            :target='`info-${lesson.id}`'
+            :show.sync="showInfo"
+            placement="bottom"
+            ref="popover"
+        >
+          <template #title>
+            Lesson with {{ lesson.student.firstName }}
+          </template>
+          <b-row align-v='center'>
+            <b-col align='middle' class='time'>
+              {{ formatDate(lesson.start) }}
+              {{ `${formatTime(lesson.start)}-${formatTime(lesson.end)} ` }}
+              <br>
+              {{ lesson.hours }}{{
+                lesson.hours > 1 ? ` hours` :
+                    ` hour`
+              }}
+              on {{ lesson.location }}
+              <br>
+              <p v-if='lesson.paid'>
+                Paid
+              </p>
+              <p v-else>
+                Not paid yet
+              </p>
+              <p>
+                {{lesson.comment}}
+              </p>
+            </b-col>
+          </b-row>
+        </b-popover>
       </b-col>
     </b-row>
   </b-card>
@@ -40,7 +73,9 @@ export default {
     }
   },
   data() {
-    return {}
+    return {
+      showInfo: false,
+    }
   },
   methods: {
     formatTime(date) {
@@ -50,8 +85,8 @@ export default {
       let ampm = date.getHours() >= 12 ? "PM" : "AM"
       return hours + (minutes == "00" ? "" : (":" + minutes)) + ampm
     },
-    switchLessonLock(){
-      if(this.lesson.locked){
+    switchLessonLock() {
+      if (this.lesson.locked) {
         this.$services.service.unlockLesson(this.lesson.id).then((res) => {
           this.$nuxt.$emit("success", "successfully_unlocked_lesson")
           this.lesson.locked = false
@@ -80,8 +115,15 @@ export default {
       }
 
     },
-    editLesson(){
+    editLesson() {
       this.$nuxt.$router.push(`lesson/${this.lesson.id}`)
+    },
+    formatDate(date) {
+      try {
+        return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
+      } catch (e) {
+        this.$nuxt.$emit("error")
+      }
     }
   }
 }
@@ -110,5 +152,9 @@ export default {
   border-left: $danger solid 3px !important;
   border-bottom-left-radius: 0;
   border-top-left-radius: 0;
+}
+
+.lesson-info-popover {
+  min-width: 18rem;
 }
 </style>

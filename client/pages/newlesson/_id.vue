@@ -28,6 +28,12 @@
       <b-form-group v-if='lesson.location && lesson.location == "Custom"'>
         <b-form-input v-model="lesson.customlocation" placeholder='Enter custom location'></b-form-input>
       </b-form-group>
+      <b-form-group label="Comment">
+        <b-form-input
+            v-model="lesson.comment"
+            placeholder="Comment"
+        ></b-form-input>
+      </b-form-group>
       <p align='middle' v-if='student && lesson.location && startTime && endTime && lesson.date'>
         {{ lesson.location }} lesson <br>
         from {{ startTime.formatted }} to {{ endTime.formatted }} <br>
@@ -43,7 +49,7 @@
 export default {
   components: {},
   layout: 'index',
-  name: 'NewPayment',
+  name: 'NewLesson',
   props: [
     'user'
   ],
@@ -82,8 +88,7 @@ export default {
     submit() {
       let location = this.lesson.location == "Custom" ? this.lesson.customlocation : this.lesson.location
       this.$services.service.saveLesson(-1, this.student.id, this.startTime.value, this.endTime.value,
-          this.lesson.date,
-          location).then((res) => {
+          this.lesson.date, this.lesson.comment, location).then((res) => {
         this.$nuxt.$emit("success", "successfully_saved_lesson")
         this.$nuxt.$router.push("/lessons")
       }).catch((error) => {

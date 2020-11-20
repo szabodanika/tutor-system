@@ -20,13 +20,10 @@
               ></b-form-input>
             </b-input-group>
           </b-form-group>
-          <b-form-checkbox v-model="payment.cash">Cash payment</b-form-checkbox>
-          <br>
-          <b-form-group label="Transaction number">
+          <b-form-group label="Comment">
             <b-form-input
-                :disabled='payment.cash'
-                v-model="payment.transactionNumber"
-                placeholder="Transaction number"
+                v-model="payment.comment"
+                placeholder="Comment"
             ></b-form-input>
           </b-form-group>
           <b-button block @click='submit' variant="primary">Save</b-button>
@@ -64,8 +61,7 @@ export default {
   methods: {
     submit() {
       this.$services.service.savePayment(null, this.user.id, this.payment.student, this.payment.amount,
-          this.payment.cash,
-          this.payment.transactionNumber).then((res) => {
+          this.payment.comment).then((res) => {
         this.$nuxt.$emit("success", "successfully_saved_payment")
         this.$nuxt.$router.push("/payments")
       }).catch((error) => {

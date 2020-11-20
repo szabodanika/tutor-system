@@ -25,27 +25,17 @@ public class Payment {
 
     private int amount;
 
-    private boolean cash;
-
-    private String transactionNumber;
+    private String comment;
 
     public Payment() {
     }
 
-    public boolean isCash() {
-        return cash;
+    public String getComment() {
+        return comment;
     }
 
-    public void setCash(boolean cash) {
-        this.cash = cash;
-    }
-
-    public String getTransactionNumber() {
-        return transactionNumber;
-    }
-
-    public void setTransactionNumber(String transactionNumber) {
-        this.transactionNumber = transactionNumber;
+    public void setComment(String transactionNumber) {
+        this.comment = transactionNumber;
     }
 
     public Date getDate() {

@@ -7,21 +7,24 @@
             <b-avatar
                 :text="initials"
                 variant="primary"></b-avatar>
-            <span style='margin-left: 1rem'>{{ payment.student.firstName }} {{ payment.student.lastName }} on {{formatDateTime(payment.date)}}</span>
+            <span style='margin-left: 1rem'>{{ owner.firstName }} {{ owner.lastName }} on
+              {{formatDate(payment.date)}}</span>
           </div>
         </b-col>
       </b-row>
     </template>
     <b-card-body>
-      <span id='amount'>
+      <p class='text-muted'>
+        <span id='amount'>
         £{{payment.amount}}
       </span>
-      <br>
-      Covers {{ (payment.amount/payment.student.rate).toFixed(0)}} lesson{{
-        (payment.amount/payment.student.rate)>1?"s":""}}
-      <br>
-      {{payment.cash?"Cash payment":""}}
-      {{payment.transactionNumber?`Transaction number: ${payment.transactionNumber}`:""}}
+      covers {{ (payment.amount/owner.rate).toFixed(0)}} hour{{
+        (payment.amount/owner.rate)>1?"s":""}}
+      </p>
+      <p v-if='payment.comment'>
+        <br>
+        {{payment.comment}}
+      </p>
     </b-card-body>
   </b-card>
 </template>
@@ -30,7 +33,8 @@
 export default {
   name: "PaymentPreview",
   props: {
-    payment: {}
+    payment: {},
+    owner: {}
   },
   data() {
     return {
@@ -43,7 +47,7 @@ export default {
   },
   methods: {
     getStudent() {
-      this.$services.service.getUserById(this.payment.student.id).then((res) => {
+      this.$services.service.getUserById(this.owner.id).then((res) => {
         this.studentData = res
 
         if(this.studentData.firstName) this.initials += this.studentData.firstName.substr(0,1)
@@ -67,9 +71,11 @@ export default {
       })
     },
     formatDate(date) {
+      date = new Date(date)
       return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
     },
     formatDateTime(date) {
+      date = new Date(date)
       return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +
           date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
     }

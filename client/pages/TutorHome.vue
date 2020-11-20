@@ -5,7 +5,7 @@
     </h2>
     <br>
     <b-row>
-      <b-col>
+      <b-col cols='12'>
         <WeekView :tutor='user.id' :user='user' :week='week'></WeekView>
       </b-col>
     </b-row>

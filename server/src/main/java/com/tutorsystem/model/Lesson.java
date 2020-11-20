@@ -28,7 +28,7 @@ public class Lesson implements Comparable<Lesson> {
 
     private Date start, end;
 
-    private String location;
+    private String location, comment;
 
     private boolean locked = false;
 
@@ -66,6 +66,14 @@ public class Lesson implements Comparable<Lesson> {
             if (l.equals(this)) return balance >= 0;
         }
         return false;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public String getLocation() {

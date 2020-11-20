@@ -2,10 +2,7 @@ export default class Service {
   http = null
   baseUrl = null
   serviceUrl = ''
-  headers = {
-    "Access-Control-Allow-Origin": "http://localhost:3000",
-    'Access-Control-Allow-Credentials': 'true'
-  }
+  headers = {}
 
   constructor(axios, baseUrl) {
     this.http = axios
@@ -73,6 +70,15 @@ export default class Service {
 
   async login(email, password) {
     const {data} = await this.http.get(`${this.baseUrl}/login`, {params: {email, password}, withCredentials: true})
+    data.paymentsSent = data.paymentsSent.map((payment) => ({
+      ...payment,
+      date: new Date(payment.date)
+    }))
+
+    data.paymentsReceived = data.paymentsReceived.map((payment) => ({
+      ...payment,
+      date: new Date(payment.date)
+    }))
     return data
   }
 
@@ -112,6 +118,14 @@ export default class Service {
     return data
   }
 
+  async deleteLesson(id) {
+    const {data} = await this.http.get(`${this.baseUrl}/deletelesson`, {
+      params: {id}, withCredentials: true
+    })
+    return data
+  }
+
+
   async updatePayment(id, tutor, student, amount, cash, transaction) {
     const {data} = await this.http.get(`${this.baseUrl}/savepayment`, {
       params: {
@@ -126,8 +140,8 @@ export default class Service {
     return data
   }
 
-  async savePayment(id, tutor, student, amount, cash, transaction) {
-    return this.updatePayment(-1, tutor, student, amount, cash, transaction)
+  async savePayment(id, tutor, student, amount, comment) {
+    return this.updatePayment(-1, tutor, student, amount, comment)
   }
 
   async resetTutorCode(tutor) {

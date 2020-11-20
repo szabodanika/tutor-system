@@ -1,7 +1,7 @@
 <template>
   <div id='root'>
     <b-navbar id='navigation' toggleable="lg" variant="light" type="light" sticky align='center'>
-      <b-navbar-brand href="#">
+      <b-navbar-brand href="/">
         oktatutor
       </b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>

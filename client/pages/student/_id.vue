@@ -23,8 +23,24 @@
       <br>
       <b-button v-if='!student.disabled' :disabled='student.disabled' block @click='submit' variant="primary">Save
       </b-button>
-      <b-button :disabled='student.disabled' block @click='disable'
-                variant="danger">{{student.disabled?"Disabled":"Disable"}}</b-button>
+      <br>
+      <b-row align-v='center' v-if='!student.disabled'>
+        <b-col cols='8'>
+          <b-form-checkbox button button-variant='outline-primary' v-model='disableEnabled'>
+            Disable Student
+          </b-form-checkbox>
+        </b-col>
+        <b-col align='left'>
+          <b-button :disabled='!disableEnabled' block
+                    @click='disable'
+                    variant="danger">
+            Disable
+          </b-button>
+        </b-col>
+      </b-row>
+      <p v-if='student.disabled' class='text-muted'>
+        Student disabled
+      </p>
     </b-card>
   </b-overlay>
 </template>
@@ -40,7 +56,8 @@ export default {
   data() {
     return {
       student: {},
-      isLoading: true
+      isLoading: true,
+      disableEnabled: false
     }
   },
   watch: {

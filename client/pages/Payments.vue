@@ -21,7 +21,7 @@
         </b-col>
 
         <b-col xl='4' md='6' sm='12' v-for='(payment, index) in payments'>
-          <PaymentPreview id='payment' :payment="payment">
+          <PaymentPreview id='payment' :payment="payment" :owner='payment.student'>
           </PaymentPreview>
         </b-col>
       </b-row>

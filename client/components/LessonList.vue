@@ -1,9 +1,7 @@
 <template>
-  <b-overlay :show="isLoading" :rounded='true' variant='transparent'
-             spinner-type='grow' :opacity="1.0" blur="1rem">
     <b-row>
       <b-col xl='6' md='6'>
-        <b-card class='container' no-body v-if='lessons'>
+        <b-card class='container upcoming' no-body v-if='lessons'>
           <template #header>
             <b-row align-v='center'>
               <b-col align='left'>
@@ -29,7 +27,6 @@
         </b-card>
       </b-col>
     </b-row>
-  </b-overlay>
 </template>
 
 <script>
@@ -127,8 +124,11 @@ export default {
 
 <style scoped>
 .container {
-  margin-bottom: 2rem;
   padding-bottom: 0.5rem;
+}
+
+.upcoming {
+  margin-bottom: 3rem;
 }
 
 .noLessons {

@@ -3,7 +3,7 @@
              spinner-type='grow'  :opacity="1.0"  blur="1rem" id='overlay'>
     <b-card id='new-lesson-card' align='left'>
       <template #header>
-        Add new lesson
+        Edit lesson
       </template>
       <b-form-group label='Select student'>
         <b-form-select v-model="student" :options="students"></b-form-select>
@@ -22,11 +22,11 @@
           </b-col>
         </b-row>
       </b-form-group>
-      <b-form-group label='Location' v-if='!lesson.location || lesson.location != "Custom"'>
+      <b-form-group label='Location'>
         <b-form-select v-model="lesson.location"
                        :options="locations"></b-form-select>
       </b-form-group>
-      <b-form-group v-if='lesson.location && lesson.location == "Custom"' label='Location'>
+      <b-form-group v-if='lesson.location && lesson.location == "Custom"'>
         <b-form-input v-model="lesson.customLocation"></b-form-input>
       </b-form-group>
       <p v-if='lesson.location && lesson.start && lesson.end && lesson.date'>
@@ -35,6 +35,21 @@
         {{ student.firstName }}
       </p>
       <b-button block @click='submit' variant="primary">Save</b-button>
+      <br>
+      <b-row align-v='center'>
+        <b-col cols='8'>
+          <b-form-checkbox button button-variant='outline-primary' v-model='deleteEnabled'>
+            Delete lesson
+          </b-form-checkbox>
+        </b-col>
+        <b-col align='left'>
+          <b-button :disabled='!deleteEnabled' block
+                    @click='deleteLesson'
+                    variant="danger">
+            Delete
+          </b-button>
+        </b-col>
+      </b-row>
     </b-card>
   </b-overlay>
 </template>
@@ -54,7 +69,8 @@ export default {
       students: [],
       locations: ["Discord", "Microsoft Teams", "Zoom", "Face to face", "Custom"],
       allweeks: [],
-      isLoading: true
+      isLoading: true,
+      deleteEnabled: false
     }
   },
   watch: {
@@ -116,6 +132,20 @@ export default {
           // no error message, this was unexpected
           else this.$nuxt.$emit("error", "unexpected_error")
         })
+    },
+    deleteLesson() {
+      this.$services.service.deleteLesson(this.lesson.id).then((res) => {
+        this.$nuxt.$emit("success", "successfully_deleted_lesson")
+        this.$nuxt.$router.push("/lessons")
+      }).catch((error) => {
+        // check if we have a string response data. these are usually custom defined on server side
+        if (error.response && (typeof error.response.data === "string" || error.response.data instanceof String))
+          this.$nuxt.$emit("error", error.response.data)
+        // check if we have an error message
+        else if (typeof error.message === "string" || error.message instanceof String) this.$nuxt.$emit("error", error.message)
+        // no error message, this was unexpected
+        else this.$nuxt.$emit("error", "unexpected_error")
+      })
     }
   }
 }

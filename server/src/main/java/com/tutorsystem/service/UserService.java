@@ -62,6 +62,14 @@ public class UserService implements CustomService<User, Long>{
         return code;
     }
 
+    public int generateActivationCode(int max){
+        int code = new Random().nextInt(max);
+        while(findByActivationCode(code) != null) {
+            code = new Random().nextInt(max);
+        }
+        return code;
+    }
+
     public User findByActivationCode(int activationCode) {
         Optional<User> optionalUser = this.repository.findByActivationCode(activationCode);
         return optionalUser.orElse(null);

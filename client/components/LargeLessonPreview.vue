@@ -40,35 +40,6 @@ export default {
       let ampm = date.getHours() >= 12 ? "PM" : "AM"
       return hours + (minutes == "00" ? "" : (":" + minutes)) + ampm
     },
-    switchLessonLock() {
-      if (this.lesson.locked) {
-        this.$services.service.unlockLesson(this.lesson.id).then((res) => {
-          this.$nuxt.$emit("success", "successfully_unlocked_lesson")
-          this.lesson.locked = false
-        }).catch((error) => {
-          // check if we have a string response data. these are usually custom defined on server side
-          if (error.response && (typeof error.response.data === "string" || error.response.data instanceof String))
-            this.$nuxt.$emit("error", error.response.data)
-          // check if we have an error message
-          else if (typeof error.message === "string" || error.message instanceof String) this.$nuxt.$emit("error", error.message)
-          // no error message, this was unexpected
-          else this.$nuxt.$emit("error", "unexpected_error")
-        })
-      } else {
-        this.$services.service.lockLesson(this.lesson.id).then((res) => {
-          this.$nuxt.$emit("success", "successfully_locked_lesson")
-          this.lesson.locked = true
-        }).catch((error) => {
-          // check if we have a string response data. these are usually custom defined on server side
-          if (error.response && (typeof error.response.data === "string" || error.response.data instanceof String))
-            this.$nuxt.$emit("error", error.response.data)
-          // check if we have an error message
-          else if (typeof error.message === "string" || error.message instanceof String) this.$nuxt.$emit("error", error.message)
-          // no error message, this was unexpected
-          else this.$nuxt.$emit("error", "unexpected_error")
-        })
-      }
-    },
     formatDate(date) {
       try {
         return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()

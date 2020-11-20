@@ -655,7 +655,7 @@ public class MainController {
                             lesson.getLocation(),
                             lesson.getComment()!=null?"\nComment: " + lesson.getComment():""));
 
-            emailService.sendmail(student.getEmail(),
+            emailService.sendmail(userSessionBean.getUser().getEmail(),
                     "New Lesson on Oktatutor",
                     String.format("Hello %s,\n" +
                                     "You just added a lesson on oktatutor for %s.\n" +

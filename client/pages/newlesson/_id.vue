@@ -82,13 +82,13 @@ export default {
         this.students.push({value: student, text: `${student.firstName} ${student.lastName ? student.lastName : ""}`})
       }
     })
-    this.student = this.students[0].value
+    if (!this.id) this.student = this.students[0].value
   },
   methods: {
     submit() {
       let location = this.lesson.location == "Custom" ? this.lesson.customlocation : this.lesson.location
       this.$services.service.saveLesson(-1, this.student.id, this.startTime.value, this.endTime.value,
-          this.lesson.date, this.lesson.comment, location).then((res) => {
+          this.lesson.date, location, this.lesson.comment).then((res) => {
         this.$nuxt.$emit("success", "successfully_saved_lesson")
         this.$nuxt.$router.push("/lessons")
       }).catch((error) => {

@@ -2,12 +2,10 @@ package com.tutorsystem.controller;
 
 import com.tutorsystem.email.EmailService;
 import com.tutorsystem.model.Lesson;
+import com.tutorsystem.model.PasswordReset;
 import com.tutorsystem.model.Payment;
 import com.tutorsystem.model.User;
-import com.tutorsystem.service.ConfigService;
-import com.tutorsystem.service.LessonService;
-import com.tutorsystem.service.PaymentService;
-import com.tutorsystem.service.UserService;
+import com.tutorsystem.service.*;
 import com.tutorsystem.session.UserSessionBean;
 import com.tutorsystem.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +17,7 @@ import javax.mail.MessagingException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @RestController
@@ -44,6 +43,12 @@ public class MainController {
 
     @Autowired
     private ConfigService configService;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private PasswordResetService passwordResetService;
 
     @GetMapping(value = "/")
     Object index() {
@@ -99,6 +104,18 @@ public class MainController {
                 newUser.setRate(rate);
             }
             users.save(newUser);
+
+            try {
+                emailService.sendmail(newUser.getEmail(), "Welcome to Oktatutor",
+                        String.format(
+                                "Hello %s,\n" +
+                                        "Your oktatutor account has been created successfully.\n\n" +
+                                        "If you did not sign up, please contact our support.", newUser.getFirstName()));
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             return new ResponseEntity<>("succesfully_registered", HttpStatus.OK);
         } else return new ResponseEntity<>("signup_closed", HttpStatus.NOT_FOUND);
@@ -248,6 +265,17 @@ public class MainController {
 
             this.userSessionBean.setUser(user);
 
+            try {
+                emailService.sendmail(user.getEmail(), "Welcome to Oktatutor",
+                        String.format("Hello %s,\n" +
+                                "Your oktatutor account has been created successfully.\n\n" +
+                                "If you did not sign up, please contact our support.", user.getFirstName()));
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             return user;
 
         } else return new ResponseEntity<>("signup_closed", HttpStatus.NOT_FOUND);
@@ -287,7 +315,89 @@ public class MainController {
 
         this.userSessionBean.getUser().setDisabled(true);
         this.users.save(this.userSessionBean.getUser());
+
+        try {
+            emailService.sendmail(this.userSessionBean.getUser().getEmail(), "Oktatutor Account Disabled",
+                    "Hello %s,\n" +
+                            "Your Oktatutor account has been deactivated."
+            );
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return new ResponseEntity<>("account_deactivated_successfully", HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/requestpasswordreset")
+    Object requestPasswordReset(@RequestParam String email) {
+        User user = this.users.findByEmail(email);
+
+        if (user != null) {
+            PasswordReset passwordReset = new PasswordReset();
+            passwordReset.setDate(new Date());
+            passwordReset.setUser(user);
+            user.setPasswordReset(passwordReset);
+            passwordReset.setResetCode(passwordResetService.generateResetCode());
+            passwordResetService.save(passwordReset);
+
+            try {
+                emailService.sendmail(email, "Oktatutor Password Reset",
+                        String.format(
+                                "Hello %s,\n" +
+                                        "Your password reset code is <strong>%s</strong>\n" +
+                                        "\n" +
+                                        "If you did not request password reset, please contact our support."
+                                ,
+                                user.getFirstName(), passwordReset.getResetCode())
+                );
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return new ResponseEntity<>("reset_requested_successfully", HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/passwordreset")
+    Object requestPasswordReset(@RequestParam int code,@RequestParam String password) {
+
+        PasswordReset passwordReset = passwordResetService.findByCode(code);
+        if (passwordReset != null) {
+            if (passwordReset.isValid() && passwordReset.getResetCode() == code) {
+                if (!Util.validatePassword(password)) {
+                    return new ResponseEntity<>("incorrect_password", HttpStatus.BAD_REQUEST);
+                }
+                User user = passwordReset.getUser();
+                if(user.getPasswordReset() != null){
+                    PasswordReset passwordReset1 = user.getPasswordReset();
+                    user.setPasswordReset(null);
+                    users.save(user);
+                    passwordResetService.remove(passwordReset1);
+                }
+                user.setPassword(Util.hashPassword(password));
+                user.setPasswordReset(null);
+                users.save(user);
+                passwordResetService.remove(passwordReset);
+                try {
+                    emailService.sendmail(user.getEmail(), "Oktatutor Password Reset",
+                            String.format("Hello %s,\n" +
+                                    "You have successfully changed your oktatutor password.\n\n" +
+                                    "If you did not request password reset, please contact our support.",
+                                    user.getFirstName()));
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return new ResponseEntity<>("successfully_reset_password", HttpStatus.OK);
+            }
+        }
+
+        return new ResponseEntity<>("password_reset_failed", HttpStatus.FORBIDDEN);
     }
 
     @GetMapping(value = "/user")
@@ -357,6 +467,17 @@ public class MainController {
         student.setDisabled(true);
         users.save(student);
 
+        try {
+            emailService.sendmail(student.getEmail(), "Oktatutor Account Deactivated",
+                    String.format("Hello %s,\n" +
+                            "Your oktatutor account has been deactivated.", student.getFirstName()));
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         return student;
     }
 
@@ -413,6 +534,28 @@ public class MainController {
         payment.setAmount(amount);
         payment.setComment(comment);
         payments.save(payment);
+
+        try {
+            emailService.sendmail(student.getEmail(),
+                    "Oktatutor Payment Registered",
+                    String.format("Hello %s,\n" +
+                                    "Your tutor %s has registered a payment of <strong>&pound;" + amount + "</strong> on " +
+                                    "oktatutor.",
+                            student.getFirstName(),
+                            tutor.getFirstName()));
+
+            emailService.sendmail(tutor.getEmail(),
+                    "Oktatutor Payment Registered",
+                    String.format("Hello %s,\n" +
+                                    "Your have registered a payment of <strong>&pound;" + amount + "</strong> for %s on " +
+                                    "oktatutor.",
+                            tutor.getFirstName(),
+                            student.getFirstName()));
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return new ResponseEntity<>("payment_created", HttpStatus.OK);
     }
@@ -490,6 +633,48 @@ public class MainController {
         lesson.setComment(comment);
 
         lessons.save(lesson);
+
+
+        SimpleDateFormat dateFormatDateOnly = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat dateFormatTimeOnly = new SimpleDateFormat("HH:mm");
+
+        try {
+            emailService.sendmail(student.getEmail(),
+                    "New Lesson on Oktatutor",
+                    String.format("Hello %s,\n" +
+                                    "Your tutor %s has just added a lesson on oktatutor.\n" +
+                                    "Date: %s\n" +
+                            "Time: %s - %s\n"+
+                            "Place: %s\n"+
+                            "%s",
+                            student.getFirstName(),
+                            userSessionBean.getUser().getFirstName(),
+                            dateFormatDateOnly.format(lesson.getStart()),
+                            dateFormatTimeOnly.format(lesson.getStart()),
+                            dateFormatTimeOnly.format(lesson.getEnd()),
+                            lesson.getLocation(),
+                            lesson.getComment()!=null?"\nComment: " + lesson.getComment():""));
+
+            emailService.sendmail(student.getEmail(),
+                    "New Lesson on Oktatutor",
+                    String.format("Hello %s,\n" +
+                                    "Your just added a lesson on oktatutor for %s.\n" +
+                                    "Date: %s\n"+
+                            "Time: %s - %s\n"+
+                            "Place: %s\n\n"+
+                            "%s",
+                            userSessionBean.getUser().getFirstName(),
+                            student.getFirstName(),
+                            dateFormatDateOnly.format(lesson.getStart()),
+                            dateFormatTimeOnly.format(lesson.getStart()),
+                            dateFormatTimeOnly.format(lesson.getEnd()),
+                            lesson.getLocation(),
+                            lesson.getComment()!=null?"\nComment: " + lesson.getComment():""));
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return new ResponseEntity<>("lesson_created", HttpStatus.OK);
     }
 
@@ -519,7 +704,6 @@ public class MainController {
 
         return lesson;
     }
-
 
     @GetMapping(value = "/locklesson")
     Object lockLesson(@RequestParam Long id) {
@@ -595,10 +779,9 @@ public class MainController {
     @GetMapping(value = "/testmail")
     void sendTestMail() {
         try {
-            EmailService.sendmail();
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+            emailService.sendmail("daniel.szabo99@outlook.com", "Message from Oktatutor",
+                    "Hello dear,\n what is up?");
+        } catch (MessagingException | IOException e) {
             e.printStackTrace();
         }
     }

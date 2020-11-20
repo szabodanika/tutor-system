@@ -4,7 +4,9 @@
       <b-col>
         <b-card id='student-signup-card' align='left'>
           <template #header>
-            Join your tutor
+            <h5>
+              Join your tutor
+            </h5>
           </template>
           <b-form-group
               label="Enter the 6 digit code your tutor gave you"

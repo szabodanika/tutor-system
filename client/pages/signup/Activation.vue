@@ -4,7 +4,9 @@
       <b-col>
         <b-card id='tutor-signup-card' align='left'>
           <template #header>
-            Activate student account
+            <h5>
+              Activate student account
+            </h5>
           </template>
           <b-form-group
               label="Enter the 7 digit activation code"

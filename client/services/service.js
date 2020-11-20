@@ -87,7 +87,7 @@ export default class Service {
     return data
   }
 
-  async saveLesson(id, student, start, end, date, location) {
+  async saveLesson(id, student, start, end, date, location, comment) {
     const {data} = await this.http.get(`${this.baseUrl}/savelesson`, {
       params: {
         id: id,
@@ -96,6 +96,7 @@ export default class Service {
         end,
         date,
         location,
+        comment,
       }, withCredentials: true
     })
     return data
@@ -232,5 +233,15 @@ export default class Service {
         registered: new Date(lesson.student.registered)
       },
     }))
+  }
+
+  async requestResetCode(email) {
+    const {data} = await this.http.get(`${this.baseUrl}/requestpasswordreset`, {params: {email}, withCredentials: true})
+    return data
+  }
+
+  async resetPassword(code, password) {
+    const {data} = await this.http.get(`${this.baseUrl}/passwordreset`, {params: {code, password}, withCredentials: true})
+    return data
   }
 }

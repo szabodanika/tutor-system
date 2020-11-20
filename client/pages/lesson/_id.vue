@@ -29,6 +29,12 @@
       <b-form-group v-if='lesson.location && lesson.location == "Custom"'>
         <b-form-input v-model="lesson.customLocation"></b-form-input>
       </b-form-group>
+      <b-form-group label="Comment">
+        <b-form-input
+            v-model="lesson.comment"
+            placeholder="Comment"
+        ></b-form-input>
+      </b-form-group>
       <p v-if='lesson.location && lesson.start && lesson.end && lesson.date'>
         {{ lesson.location }} lesson from {{ lesson.start }} to {{ lesson.end }} on {{ lesson.date }}
         with
@@ -88,6 +94,9 @@ export default {
     else this.isLoading = false;
     this.user.students.forEach((student) => {
       this.students.push({value: student, text: `${student.firstName} ${student.lastName ? student.lastName : ""}`},)
+      if(student.id == this.id){
+        this.student = this.students[this.students.length-1]
+      }
     })
   },
   methods: {
@@ -95,7 +104,7 @@ export default {
       let location = this.lesson.location == "Custom" ? this.lesson.customLocation : this.lesson.location
       this.$services.service.saveLesson(this.lesson.id, this.student.id, this.lesson.start, this.lesson.end,
           this.lesson.date,
-          location).then((res) => {
+          location, this.lesson.comment).then((res) => {
         this.$nuxt.$emit("success", "successfully_saved_lesson")
         this.$nuxt.$router.push("/lessons")
       }).catch((error) => {

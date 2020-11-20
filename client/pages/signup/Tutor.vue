@@ -4,7 +4,9 @@
       <b-col>
         <b-card id='tutor-signup-card' align='left'>
           <template #header>
-            Join your tutor
+            <h5>
+              Create tutor account
+            </h5>
           </template>
           <b-form-group
               prepend="£"

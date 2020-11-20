@@ -46,6 +46,10 @@ public class User {
     @JsonIgnoreProperties("tutor")
     private List<Payment> paymentsReceived;
 
+    @OneToOne
+    @JsonIgnore
+    private PasswordReset passwordReset;
+
     @Transient
     private int totalPaid;
 
@@ -73,6 +77,16 @@ public class User {
                 totalDebt -= payment.getAmount();
             }
         }
+    }
+
+    public PasswordReset getPasswordReset() {
+        return passwordReset;
+    }
+
+
+
+    public void setPasswordReset(PasswordReset passwordReset) {
+        this.passwordReset = passwordReset;
     }
 
     public String getInfo() {

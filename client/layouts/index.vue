@@ -41,7 +41,8 @@
     <b-overlay :show="isLoading" class='content' :rounded='true'
                variant='transparent' spinner-type='grow'  :opacity="1.0"  blur="1rem">
       <span v-if='!isLoading'>
-        <NuxtChild v-if='user || !restrictedPages.includes($nuxt.$route.path)' :user='user' class='content'/>
+        <NuxtChild v-if='(user || !restrictedPages.includes($nuxt.$route.path)) &&
+        (user || notrestrictedPages.includes($nuxt.$route.path))' :user='user' class='content'/>
         <Login v-else class='content'/>
       </span>
     </b-overlay>
@@ -76,7 +77,15 @@ export default {
         "/newpayment",
         "/payments",
         "/newstudent",
-        "/students"]
+        "/students"],
+      notrestrictedPages: [
+        "/",
+        "/signup",
+        "/signup/activation",
+        "/signup/student",
+        "/signup/tutor",
+        "/login",
+        "/passwordreset"]
     }
   },
   watch: {},
@@ -110,6 +119,7 @@ export default {
         'api_closed': 'Data service has been temporarily closed.',
         'passwords_not_matching': 'Your passwords are not matching.',
         'account_disabled': 'This account has been disabled.',
+        'password_reset_failed': 'Failed to reset password.',
         'incorrect_name': 'Your name cannot contain any special characters and you have to enter a first name',
         'incorrect_email': 'Invalid email address',
         'incorrect_phone': 'Invalid phone number',
@@ -155,7 +165,10 @@ export default {
         'successfully_unlocked_lesson': 'Lesson unlocked successfully.',
         'successfully_saved_student': 'Student saved successfully.',
         'successfully_saved_payment': 'Payment saved successfully.',
-        'successfully_saved_changes': 'Changes saved successfully.'
+        'successfully_saved_changes': 'Changes saved successfully.',
+        'successfully_requested_reset': 'Requested password reset code',
+        'successfully_reset_password': 'You have successfully changed your password',
+        'successfully_deleted_lesson': 'Lesson successfully removed'
       }
 
       this.$bvToast.toast(msg in messages ? messages[msg] : msg, {
@@ -176,6 +189,8 @@ export default {
         else if (typeof error.message === "string" || error.message instanceof String) this.handleError(error.message)
         // no error message, this was unexpected
         else this.handleError("unexpected_error")
+
+        this.$cookies.remove('user')
       }).finally(() => {
         this.isLoading = false
       })

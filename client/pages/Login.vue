@@ -6,6 +6,7 @@
         <br>
         <b-button @click='$nuxt.$router.push("/signup/student")' variant="primary">Join your tutor</b-button>
         <b-button @click='$nuxt.$router.push("/signup/activation")' variant="primary">Activate account</b-button>
+        <b-button @click='$nuxt.$router.push("/signup/tutor")' variant="primary">Sign up as tutor</b-button>
         <br>
         <br>
         <b-card id='login-card' align='left'>
@@ -37,16 +38,9 @@
             <b-icon icon='key'></b-icon>
           </b-button>
         </b-card>
-        <nuxt-link to='#' align='middle'>
-          <b-link>Forgot password?</b-link>
+        <nuxt-link  to='/passwordreset' align='middle'>
+          Forgot password?
         </nuxt-link>
-        <br>
-        <NuxtLink to='/signup/tutor' align='middle'>
-          Create tutor account
-        </NuxtLink>
-        <br>
-        <br>
-
       </b-col>
     </b-row>
   </div>

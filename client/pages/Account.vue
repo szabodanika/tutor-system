@@ -1,107 +1,106 @@
 <template>
-  <b-overlay>
-    <div class="container" align='middle'>
-      <b-button @click='signOut'>Sign out
-        <b-icon icon='box-arrow-right'></b-icon>
-      </b-button>
-      <b-col>
-        <b-card id='account-edit-card' align='left'>
-          <template #header>
-            Changing account settings
-          </template>
-          <b-form-group
-              label="Name"
-          >
-            <b-form-input
-                v-model="user.firstName"
-                required
-                placeholder="First name"
-            ></b-form-input>
-            <br>
-            <b-form-input
-                v-model="user.lastName"
-                required
-                placeholder="Last name"
-            ></b-form-input>
-          </b-form-group>
-          <b-form-group v-if='user.tutorAccount'
-                        label="Info"
-          >
-            <b-form-input
-                v-model="user.info"
-                required
-                placeholder="First name"
-            ></b-form-input>
-          </b-form-group>
-          <b-form-group
-              v-if='user.tutorAccount'
-              prepend="£"
-              label="Your hourly rate"
-          >
-            <b-form-input
-                v-model="user.rate"
-                type="number"
-                required
-                placeholder="Hourly rate"
-            ></b-form-input>
-          </b-form-group>
-          <b-form-group
-              label="Email"
-          >
-            <b-form-input
-                v-model="user.email"
-                type="email"
-                required
-                placeholder="Enter email"
-            ></b-form-input>
-          </b-form-group>
-          <b-form-group
-              label="Phone"
-          >
-            <b-form-input
-                v-model="user.phone"
-                required
-                placeholder="Enter phone number"
-            ></b-form-input>
-          </b-form-group>
-          <b-form-group label="Change password">
-            <p class='text-muted'>
-              (minimum 8 characters and one capital letter)
-            </p>
-            <b-form-input
-                type='password'
-                v-model="user.password1"
-                required
-                placeholder="Enter password"
-            ></b-form-input>
-            <br>
-            <b-form-input
-                type='password'
-                v-model="user.password2"
-                required
-                placeholder="Repeat password"
-            ></b-form-input>
-          </b-form-group>
-          <b-button block @click='submit' variant="primary">Save</b-button>
+  <div align='middle'>
+    <b-button @click='signOut'>Sign out
+      <b-icon icon='box-arrow-right'></b-icon>
+    </b-button>
+    <b-col>
+      <b-card id='account-edit-card' align='left'>
+        <template #header>
+          Changing account settings
+        </template>
+        <b-form-group
+            label="Name"
+        >
+          <b-form-input
+              v-model="user.firstName"
+              required
+              placeholder="First name"
+          ></b-form-input>
           <br>
-          <b-row align-v='center'>
-              <b-col cols='8'>
-               <b-form-checkbox button button-variant='outline-primary' v-model='deactivateEnabled'>
-                 Deactivate my account
-               </b-form-checkbox>
-              </b-col>
-            <b-col align='left'>
-              <b-button :disabled='!deactivateEnabled' block
-                        @click='deactivate'
-                        variant="danger">
-                Deactivate
-              </b-button>
-            </b-col>
-          </b-row>
-        </b-card>
-      </b-col>
-    </div>
-  </b-overlay>
+          <b-form-input
+              v-model="user.lastName"
+              required
+              placeholder="Last name"
+          ></b-form-input>
+        </b-form-group>
+        <b-form-group v-if='user.tutorAccount'
+                      label="Info"
+        >
+          <b-form-input
+              v-model="user.info"
+              required
+              placeholder="First name"
+          ></b-form-input>
+        </b-form-group>
+        <b-form-group
+            v-if='user.tutorAccount'
+            prepend="£"
+            label="Your hourly rate"
+        >
+          <b-form-input
+              v-model="user.rate"
+              type="number"
+              required
+              placeholder="Hourly rate"
+          ></b-form-input>
+        </b-form-group>
+        <b-form-group
+            label="Email"
+        >
+          <b-form-input
+              v-model="user.email"
+              type="email"
+              required
+              placeholder="Enter email"
+          ></b-form-input>
+        </b-form-group>
+        <b-form-group
+            label="Phone"
+        >
+          <b-form-input
+              v-model="user.phone"
+              required
+              placeholder="Enter phone number"
+          ></b-form-input>
+        </b-form-group>
+        <b-form-group label="Change password">
+          <p class='text-muted'>
+            (minimum 8 characters and one capital letter)
+          </p>
+          <b-form-input
+              type='password'
+              v-model="user.password1"
+              required
+              placeholder="Enter password"
+          ></b-form-input>
+          <br>
+          <b-form-input
+              type='password'
+              v-model="user.password2"
+              required
+              placeholder="Repeat password"
+          ></b-form-input>
+        </b-form-group>
+        <b-button block @click='submit' variant="primary">Save</b-button>
+        <br>
+        <b-row align-v='center'>
+          <b-col sm='12' md='8' align='middle'>
+            <b-form-checkbox style='margin-bottom: 0.25rem' button button-variant='outline-primary'
+                             v-model='deactivateEnabled'>
+              Deactivate my account
+            </b-form-checkbox>
+          </b-col>
+          <b-col sm='12' md='4' align='middle'>
+            <b-button style='margin-bottom: 0.25rem' :disabled='!deactivateEnabled'
+                      @click='deactivate'
+                      variant="danger">
+              Deactivate
+            </b-button>
+          </b-col>
+        </b-row>
+      </b-card>
+    </b-col>
+  </div>
 </template>
 
 <script>
@@ -182,8 +181,6 @@ export default {
 <style>
 #account-edit-card {
   max-width: 28rem;
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
   margin-top: 1rem;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;

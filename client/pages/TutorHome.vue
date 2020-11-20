@@ -1,6 +1,6 @@
 <template>
   <div class="container" v-if='user'>
-    <h2>
+    <h2 align='middle'>
       Welcome back, {{user.firstName}} ❤️
     </h2>
     <br>

@@ -3,7 +3,7 @@
   <b-card id='container' no-body>
     <template #header>
       <b-row align-v='center'>
-        <b-col align='left' cols='3'>
+        <b-col align='left' sm='12' md='3'>
           <h2 class='text-primary'> Week {{ week }} </h2>
         </b-col>
         <b-col align='center'>
@@ -16,7 +16,7 @@
             </b-button>
           </div>
         </b-col>
-        <b-col align='right' cols='3'>
+        <b-col align='right'  sm='12' md='3'>
           <h5>
             {{ formatDate(date) }}
           </h5>

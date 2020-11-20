@@ -658,7 +658,7 @@ public class MainController {
             emailService.sendmail(student.getEmail(),
                     "New Lesson on Oktatutor",
                     String.format("Hello %s,\n" +
-                                    "Your just added a lesson on oktatutor for %s.\n" +
+                                    "You just added a lesson on oktatutor for %s.\n" +
                                     "Date: %s\n"+
                             "Time: %s - %s\n"+
                             "Place: %s\n\n"+

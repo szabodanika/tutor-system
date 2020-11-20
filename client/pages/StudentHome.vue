@@ -1,6 +1,6 @@
 <template>
   <div class="container" v-if='user'>
-    <h2>
+    <h2 align='middle'>
       Welcome back, {{user.firstName}} ❤️
     </h2>
     <br>
@@ -24,7 +24,7 @@
               </b-col>
             </b-row>
           </template>
-          <PaymentPreview v-for='(payment, index) in user.paymentsSent' v-bind:key='index'
+          <PaymentPreview class='payment' v-for='(payment, index) in user.paymentsSent' v-bind:key='index'
                           :payment='payment' :owner="payment.tutor"></PaymentPreview>
         </b-card>
       </b-col>
@@ -74,4 +74,9 @@ export default {
 #tutor, #self, #lessons {
   margin-bottom: 3rem;
 }
+
+.payment {
+  margin-bottom: 1rem;
+}
+
 </style>

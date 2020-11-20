@@ -35,11 +35,12 @@ public class EmailService {
 
         Session session = Session.getInstance(props, new javax.mail.Authenticator() {
             protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
-                return new javax.mail.PasswordAuthentication(environment.getProperty("email.address"), environment.getProperty("email.password"));
+                return new javax.mail.PasswordAuthentication(environment.getProperty("email.address"),
+                        environment.getProperty("email.password"));
             }
         });
         Message msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress(environment.getProperty("email.address"), false));
+        msg.setFrom(new InternetAddress(environment.getProperty("email.sender"), false));
 
         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
         msg.setSubject(subject);

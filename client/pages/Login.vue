@@ -1,12 +1,14 @@
 <template>
   <div id="login-container" align='middle' @keypress.enter='submitLogin'>
-    <b-row v-if='!user'>
+    <b-row v-if='!user' no-gutters>
       <b-col>
         <br>
         <br>
-        <b-button @click='$nuxt.$router.push("/signup/student")' variant="primary">Join your tutor</b-button>
-        <b-button @click='$nuxt.$router.push("/signup/activation")' variant="primary">Activate account</b-button>
-        <b-button @click='$nuxt.$router.push("/signup/tutor")' variant="primary">Sign up as tutor</b-button>
+        <b-button class='other-option-button' @click='$nuxt.$router.push("/signup/student")' variant="primary">Join
+          your
+          tutor</b-button>
+        <b-button class='other-option-button'  @click='$nuxt.$router.push("/signup/activation")' variant="primary">Activate account</b-button>
+        <b-button class='other-option-button'  @click='$nuxt.$router.push("/signup/tutor")' variant="primary">Sign up as tutor</b-button>
         <br>
         <br>
         <b-card id='login-card' align='left'>
@@ -111,5 +113,9 @@ export default {
   margin-right: 0.5rem;
   margin-top: 1rem;
   margin-bottom: 1rem;
+}
+
+.other-option-button {
+  margin: 0.5rem;
 }
 </style>

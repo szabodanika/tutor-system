@@ -1,45 +1,49 @@
 <template>
   <div id='root'>
-    <b-navbar id='navigation' toggleable="lg" variant="light" type="light" sticky align='center'>
-      <b-navbar-brand href="/">
-        oktatutor
-      </b-navbar-brand>
-      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
-      <b-collapse id="nav-collapse" is-nav>
-        <b-navbar-nav>
-          <nuxt-link to="/" class='nav-link'>
-            Home
-          </nuxt-link>
-        </b-navbar-nav>
-        <b-navbar-nav v-if='user && user.tutorAccount'>
-          <nuxt-link to="/lessons" class='nav-link'>
-            Lessons
-          </nuxt-link>
-        </b-navbar-nav>
-        <b-navbar-nav v-if='user && user.tutorAccount'>
-          <nuxt-link to="/students" class='nav-link'>
-            Students
-          </nuxt-link>
-        </b-navbar-nav>
-        <b-navbar-nav v-if='user && user.tutorAccount'>
-          <nuxt-link to="/payments" class='nav-link'>
-            Payments
-          </nuxt-link>
-        </b-navbar-nav>
-        <b-navbar-nav v-if='user'>
-          <nuxt-link to="/account" class='nav-link'>
-            {{ user.firstName }} {{ user.lastName }}
-          </nuxt-link>
-        </b-navbar-nav>
-        <b-navbar-nav v-else>
-          <nuxt-link to="/login" class='nav-link'>
-            Login
-          </nuxt-link>
-        </b-navbar-nav>
-      </b-collapse>
-    </b-navbar>
+    <div align='middle'>
+      <b-navbar id='navigation' toggleable="lg" variant="light" type="light" sticky align='center'>
+        <b-navbar-brand href="/">
+        <span class='oktatutor'>
+          oktatutor
+        </span>
+        </b-navbar-brand>
+        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+        <b-collapse id="nav-collapse" is-nav>
+          <b-navbar-nav>
+            <nuxt-link to="/" class='nav-link'>
+              Home
+            </nuxt-link>
+          </b-navbar-nav>
+          <b-navbar-nav v-if='user && user.tutorAccount'>
+            <nuxt-link to="/lessons" class='nav-link'>
+              Lessons
+            </nuxt-link>
+          </b-navbar-nav>
+          <b-navbar-nav v-if='user && user.tutorAccount'>
+            <nuxt-link to="/students" class='nav-link'>
+              Students
+            </nuxt-link>
+          </b-navbar-nav>
+          <b-navbar-nav v-if='user && user.tutorAccount'>
+            <nuxt-link to="/payments" class='nav-link'>
+              Payments
+            </nuxt-link>
+          </b-navbar-nav>
+          <b-navbar-nav v-if='user'>
+            <nuxt-link to="/account" class='nav-link'>
+              {{ user.firstName }} {{ user.lastName }}
+            </nuxt-link>
+          </b-navbar-nav>
+          <b-navbar-nav v-else>
+            <nuxt-link to="/login" class='nav-link'>
+              Login
+            </nuxt-link>
+          </b-navbar-nav>
+        </b-collapse>
+      </b-navbar>
+    </div>
     <b-overlay :show="isLoading" class='content' :rounded='true'
-               variant='transparent' spinner-type='grow'  :opacity="1.0"  blur="1rem">
+               variant='transparent' spinner-type='grow' :opacity="1.0" blur="1rem">
       <span v-if='!isLoading'>
         <NuxtChild v-if='(user || !restrictedPages.includes($nuxt.$route.path)) &&
         (user || notrestrictedPages.includes($nuxt.$route.path))' :user='user' class='content'/>
@@ -199,19 +203,22 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" coped>
+@import "assets/css/light";
 
 #root {
   height: 100vh;
 }
 
 #navigation {
-  /*max-width: 1400px;*/
-  margin-left: auto;
-  margin-right: auto;
+  max-width: 1400px;
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
   box-shadow: 0 0 1em rgba(0, 0, 0, 0.3);
   background-color: #ffffff;
   text-align: center;
+  border-bottom-right-radius: 1rem;
+  border-bottom-left-radius: 1rem;
 }
 
 .content {
@@ -228,5 +235,12 @@ export default {
 .nav-link {
   margin: 0;
   color: white;
+}
+
+.oktatutor {
+  font-weight: 900;
+  font-family: "Rubik";
+  color: $primary-dark;
+  font-size: 1em;
 }
 </style>

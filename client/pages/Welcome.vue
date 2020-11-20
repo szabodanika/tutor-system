@@ -3,12 +3,19 @@
     <b-card>
       <template #header>
         <br>
-        <h1 align='middle' class='text-primary'>
-          Welcome to oktatutor
-        </h1>
-        <p align='middle' class='text-muted'>
-          Beta v1.2 made with love by Dániel Szabó
-        </p>
+        <b-row no-gutters>
+          <b-col cols='12' align='middle'>
+            <div align='middle'>
+              <b-img src='logo-300px.png'  class='logo'></b-img>
+            </div>
+          </b-col>
+          <b-col cols='12' align='middle'>
+            <h1 align='middle nowrap' class='oktatutor'>
+              oktatutor
+            </h1>
+          </b-col>
+        </b-row>
+
       </template>
       <b-card-body>
         <div align='middle'>
@@ -18,10 +25,12 @@
           </b-button>
           <br>
           <br>
-          <b-button pill size='sm' variant='outline-primary' @click='$nuxt.$router.push("/signup/tutor")'>
+          <b-button class='start-teaching' pill size='sm' variant='outline-primary'
+                    @click='$nuxt.$router.push("/signup/tutor")'>
             Start teaching
           </b-button>
-          <b-button pill size='sm' variant='outline-primary' @click='$nuxt.$router.push("/signup/activation")'>
+          <b-button class='activate-account' pill size='sm' variant='outline-primary'
+                    @click='$nuxt.$router.push("/signup/activation")'>
             Activate account
           </b-button>
         </div>
@@ -45,6 +54,9 @@
         If you need help using the application, have feedback or any other query, feel free to email me at
         <strong>daniel.szabo@oktatutor.com</strong>.
       </p>
+      <p align='middle' class='text-muted'>
+        Beta v1.2 made with love by Dániel Szabó
+      </p>
     </b-card>
   </div>
 </template>
@@ -56,8 +68,34 @@ export default {
 }
 </script>
 
-<style scoped>
- .container {
-   max-width: 48rem;
- }
+<style lang='scss' scoped>
+@import "assets/css/light";
+
+.container {
+  max-width: 48rem;
+}
+
+.logo {
+  max-height: 8rem;
+}
+
+.oktatutor {
+  font-weight: 900;
+  font-family: "Rubik";
+  color: $primary-dark;
+  font-size: 4rem;
+}
+
+@include media-breakpoint-down(md) {
+  .logo {
+    max-height: 8rem;
+  }
+  .oktatutor {
+    font-size: 2.5rem;
+  }
+}
+
+.start-teaching, .activate-account {
+  margin: 0.5rem;
+}
 </style>

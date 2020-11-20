@@ -11,10 +11,11 @@ $gray-900: #212529 !default;
 $black: #000 !default;
 
 $primary: #6610f2 !default;
-$secondary: #6610f2 !default;
+$secondary: #4b2092 !default;
 
 $blue: #6610f2 !default;
 $indigo: #6610f2 !default;
+$primary-dark: #4b2092 !default;
 $purple: #8c44d4 !default;
 $pink: #e83e8c !default;
 $red: #dc3545 !default;
@@ -51,8 +52,9 @@ $link-color: $gray-800;
 $enable-shadows: false;
 $enable-rounded: true;
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=Poppins:wght@400&family=Courier+Prime&family=PT+Serif&family=Montserrat:ital,wght@1,400;1,800&amily=Source+Code+Pro&family=Open+Sans&family=Open+Sans+Condensed:wght@300&family=Playfair+Display&family=Press+Start+2P&family=Roboto&display=swap');
-$font-family-sans-serif: 'Open Sans', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=Poppins:wght@400&family=Courier+Prime&family=PT+Serif&family=Montserrat,wght@1,400;1,800&amily=Source+Code+Pro&family=Open+Sans&family=Open+Sans+Condensed:wght@300&family=Playfair+Display&family=Press+Start+2P&family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap');
+$font-family-sans-serif: 'Rubik', 'Open Sans', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
 
 
 @import '../../node_modules/bootstrap/scss/bootstrap';
@@ -62,27 +64,44 @@ body, html {
   background-color: #e2dbff;
   margin: 0;
   padding: 0;
-  font-family: "Poppins";
+  font-family: "Rubik";
+}
+
+html {
+  font-size: 1.2rem;
+}
+
+@include media-breakpoint-up(sm) {
+  html {
+    font-size: 1.2rem;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  html {
+    font-size: 1.1rem;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  html {
+    font-size: 1rem;
+  }
 }
 
 a {
   text-decoration: none !important;
 }
 
-* {
-  font-size: 14px;
-  line-height: 1.5;
-}
-
 h1, .h1 {
-  font-family: 'Poppins';
+  font-family: 'Rubik';
   font-weight: 600;
   color: $black;
 }
 h2, h3, h4, h5, h6, .h2, .h3, .h4, .h5, .h6 {
   color: $black;
   //font-family: 'Anton';
-  font-family: 'Poppins';
+  font-family: 'Rubik';
   font-weight: 600;
   //font-weight: 400;
 }

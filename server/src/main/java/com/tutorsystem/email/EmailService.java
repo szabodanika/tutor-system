@@ -46,9 +46,19 @@ public class EmailService {
         msg.setSubject(subject);
         content = content.replace("\n", "<br>");
         msg.setContent(template.replace("$subject$", subject).replace("$content$", content).replace("$optouturl$",
-                environment.getProperty("email.optouturl")), "text/html");
+                environment.getProperty("email.optouturl")).replace("$loginurl$", environment.getProperty("email" +
+                        ".loginurl"))
+                , "text/html");
+
         msg.setSentDate(new Date());
 
-        Transport.send(msg);
+        new Thread(() -> {
+            try {
+                Transport.send(msg);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        });
+
     }
 }

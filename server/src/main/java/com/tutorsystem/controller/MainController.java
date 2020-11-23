@@ -363,7 +363,7 @@ public class MainController {
     }
 
     @GetMapping(value = "/passwordreset")
-    Object requestPasswordReset(@RequestParam int code,@RequestParam String password) {
+    Object requestPasswordReset(@RequestParam int code, @RequestParam String password) {
 
         PasswordReset passwordReset = passwordResetService.findByCode(code);
         if (passwordReset != null) {
@@ -372,7 +372,7 @@ public class MainController {
                     return new ResponseEntity<>("incorrect_password", HttpStatus.BAD_REQUEST);
                 }
                 User user = passwordReset.getUser();
-                if(user.getPasswordReset() != null){
+                if (user.getPasswordReset() != null) {
                     PasswordReset passwordReset1 = user.getPasswordReset();
                     user.setPasswordReset(null);
                     users.save(user);
@@ -385,8 +385,8 @@ public class MainController {
                 try {
                     emailService.sendmail(user.getEmail(), "Oktatutor Password Reset",
                             String.format("Hello %s,\n" +
-                                    "You have successfully changed your oktatutor password.\n\n" +
-                                    "If you did not request password reset, please contact our support.",
+                                            "You have successfully changed your oktatutor password.\n\n" +
+                                            "If you did not request password reset, please contact our support.",
                                     user.getFirstName()));
                 } catch (MessagingException e) {
                     e.printStackTrace();
@@ -642,34 +642,31 @@ public class MainController {
             emailService.sendmail(student.getEmail(),
                     "New Lesson on Oktatutor",
                     String.format("Hello %s,\n" +
-                                    "Your tutor %s has just added a lesson on oktatutor.\n" +
-                                    "Date: %s\n" +
-                            "Time: %s - %s\n"+
-                            "Place: %s\n"+
-                            "%s",
+                                    "Your tutor %s has just added a lesson on oktatutor on %s from %s to %s. \n" +
+                                    "Location:  %s.\n\n" +
+                                    "%s",
                             student.getFirstName(),
                             userSessionBean.getUser().getFirstName(),
                             dateFormatDateOnly.format(lesson.getStart()),
                             dateFormatTimeOnly.format(lesson.getStart()),
                             dateFormatTimeOnly.format(lesson.getEnd()),
                             lesson.getLocation(),
-                            lesson.getComment()!=null?"\nComment: " + lesson.getComment():""));
+                            lesson.getComment() != null ? "\n<strong>Message </strong>\n" + lesson.getComment() : ""));
 
             emailService.sendmail(userSessionBean.getUser().getEmail(),
                     "New Lesson on Oktatutor",
                     String.format("Hello %s,\n" +
-                                    "You just added a lesson on oktatutor for %s.\n" +
-                                    "Date: %s\n"+
-                            "Time: %s - %s\n"+
-                            "Place: %s\n\n"+
-                            "%s",
+                                    "Your have just added a lesson for %s on %s from %s to %s. \n" +
+                                    "Location:  %s.\n\n" +
+                                    "%s",
                             userSessionBean.getUser().getFirstName(),
                             student.getFirstName(),
                             dateFormatDateOnly.format(lesson.getStart()),
                             dateFormatTimeOnly.format(lesson.getStart()),
                             dateFormatTimeOnly.format(lesson.getEnd()),
                             lesson.getLocation(),
-                            lesson.getComment()!=null?"\nComment: " + lesson.getComment():""));
+                            lesson.getComment() != null ? "<strong>Message </strong>\n" + lesson.getComment() : ""));
+
         } catch (MessagingException e) {
             e.printStackTrace();
         } catch (IOException e) {

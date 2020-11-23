@@ -175,7 +175,7 @@ export default {
         'successfully_deleted_lesson': 'Lesson successfully removed'
       }
 
-      this.$bvToast.toast(msg in messages ? messages[msg] : msg, {
+      this.$bvToast.toast(msg in messages ? messages[msg] : "Success", {
         title: "Success",
         toaster: 'b-toaster-top-center',
         variant: 'success'

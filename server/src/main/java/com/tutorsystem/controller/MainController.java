@@ -21,7 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @RestController
-@CrossOrigin(value ="#{environment.cors.url", allowCredentials = "true")
+@CrossOrigin(value ="#{environment.cors_url}", allowCredentials = "true")
 @RequestMapping("/api")
 public class MainController {
 

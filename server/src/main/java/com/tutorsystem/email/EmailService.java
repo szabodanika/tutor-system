@@ -52,13 +52,7 @@ public class EmailService {
 
         msg.setSentDate(new Date());
 
-        new Thread(() -> {
-            try {
-                Transport.send(msg);
-            } catch (MessagingException e) {
-                e.printStackTrace();
-            }
-        });
+        Transport.send(msg);
 
     }
 }

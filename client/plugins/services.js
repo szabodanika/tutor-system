@@ -1,7 +1,8 @@
 import Service from '~/services/service'
+require('dotenv').config()
 
 export default ({ app }, inject) => {
-  let baseUrl = "http://localhost:8080/api"
+  let baseUrl = process.env.API_BASE_URL
 
   app.$axios.defaults.withCredentials = true
 	const services = {
